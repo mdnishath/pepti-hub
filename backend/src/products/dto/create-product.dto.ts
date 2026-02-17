@@ -121,4 +121,14 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   sequence?: string;
+
+  @ApiProperty({ example: 'Lyophilized Powder', required: false })
+  @IsOptional()
+  @IsString()
+  productForm?: string;
+
+  @ApiProperty({ example: 'For research use only.', required: false })
+  @IsOptional()
+  @IsString()
+  researchNotice?: string;
 }

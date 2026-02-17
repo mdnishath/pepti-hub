@@ -160,6 +160,7 @@ export interface CreateProductRequest {
   name: string;
   slug: string;
   description: string;
+  shortDescription?: string;
   price: number;
   stock: number;
   sku: string;
