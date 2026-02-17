@@ -211,30 +211,30 @@ export default function CategoriesPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-            <p className="text-gray-600 mt-1">Organize your products into categories</p>
+            <h1 className="text-2xl font-bold text-gray-100">Categories</h1>
+            <p className="text-gray-400 mt-1">Organize your products into categories</p>
           </div>
-          <Button onClick={() => handleOpenDialog()} className="flex items-center space-x-2">
+          <Button onClick={() => handleOpenDialog()} className="flex items-center space-x-2 bg-brand-600 hover:bg-brand-700 text-white border-0">
             <Plus className="w-4 h-4" />
             <span>Add Category</span>
           </Button>
         </div>
       </div>
 
-      <Card>
+      <Card className="bg-dark-bg-card border-white/5">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>All Categories</CardTitle>
-              <CardDescription>Manage product categories ({categories.length} total)</CardDescription>
+              <CardTitle className="text-gray-100">All Categories</CardTitle>
+              <CardDescription className="text-gray-400">Manage product categories ({categories.length} total)</CardDescription>
             </div>
             <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
               <Input
                 placeholder="Search categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
               />
             </div>
           </div>
@@ -242,14 +242,14 @@ export default function CategoriesPage() {
         <CardContent>
           {loadingData ? (
             <div className="text-center py-12">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-              <p className="mt-4 text-sm text-gray-600">Loading categories...</p>
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-600 border-r-transparent"></div>
+              <p className="mt-4 text-sm text-gray-400">Loading categories...</p>
             </div>
           ) : filteredCategories.length === 0 ? (
             <div className="text-center py-12">
-              <FolderTree className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No categories found</p>
-              <Button onClick={() => handleOpenDialog()} className="mt-4">
+              <FolderTree className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400">No categories found</p>
+              <Button onClick={() => handleOpenDialog()} className="mt-4 bg-brand-600 hover:bg-brand-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Category
               </Button>
@@ -257,57 +257,57 @@ export default function CategoriesPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Products</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-white/5 hover:bg-white/5">
+                  <TableHead className="text-gray-400">Name</TableHead>
+                  <TableHead className="text-gray-400">Slug</TableHead>
+                  <TableHead className="text-gray-400">Description</TableHead>
+                  <TableHead className="text-gray-400">Products</TableHead>
+                  <TableHead className="text-gray-400">Status</TableHead>
+                  <TableHead className="text-right text-gray-400">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCategories.map((cat) => (
-                  <TableRow key={cat.id} className="hover:bg-gray-50">
+                  <TableRow key={cat.id} className="border-white/5 hover:bg-white/5">
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                          <FolderTree className="w-5 h-5 text-blue-600" />
+                        <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+                          <FolderTree className="w-5 h-5 text-brand-400" />
                         </div>
-                        <p className="font-medium text-gray-900">{cat.name}</p>
+                        <p className="font-medium text-gray-100">{cat.name}</p>
                       </div>
                     </TableCell>
-                    <TableCell className="text-gray-600">{cat.slug}</TableCell>
-                    <TableCell className="text-gray-600 max-w-xs truncate">
+                    <TableCell className="text-gray-400">{cat.slug}</TableCell>
+                    <TableCell className="text-gray-400 max-w-xs truncate">
                       {cat.description || "—"}
                     </TableCell>
-                    <TableCell className="text-gray-600">
+                    <TableCell className="text-gray-400">
                       {cat._count?.products || 0}
                     </TableCell>
                     <TableCell>
                       {cat.isActive ? (
-                        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>
+                        <Badge className="bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20">Active</Badge>
                       ) : (
-                        <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">Inactive</Badge>
+                        <Badge className="bg-gray-500/10 text-gray-400 border border-gray-500/20 hover:bg-gray-500/20">Inactive</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/10">
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-dark-bg-card border-white/10 text-gray-100">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleOpenDialog(cat)}>
+                          <DropdownMenuSeparator className="bg-white/10" />
+                          <DropdownMenuItem onClick={() => handleOpenDialog(cat)} className="focus:bg-white/10 focus:text-white cursor-pointer">
                             <Edit className="w-4 h-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuSeparator className="bg-white/10" />
                           <DropdownMenuItem
-                            className="text-red-600"
+                            className="text-red-500 focus:bg-red-500/10 focus:text-red-400 cursor-pointer"
                             onClick={() => handleDelete(cat.id, cat)}
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
@@ -326,10 +326,10 @@ export default function CategoriesPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-dark-bg-card border-white/10 text-gray-100 custom-scrollbar">
           <DialogHeader>
-            <DialogTitle>{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
+            <DialogDescription className="text-gray-400">
               {editingCategory
                 ? "Update the category details below."
                 : "Fill in the details to create a new category."}
@@ -338,7 +338,7 @@ export default function CategoriesPage() {
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name *</Label>
+                <Label htmlFor="name" className="text-gray-300">Name *</Label>
                 <Input
                   id="name"
                   value={formData.name}
@@ -350,10 +350,11 @@ export default function CategoriesPage() {
                   }}
                   required
                   placeholder="Category name"
+                  className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="slug">Slug {!editingCategory && "*"}</Label>
+                <Label htmlFor="slug" className="text-gray-300">Slug {!editingCategory && "*"}</Label>
                 <Input
                   id="slug"
                   value={formData.slug}
@@ -361,29 +362,30 @@ export default function CategoriesPage() {
                   required={!editingCategory}
                   disabled={!!editingCategory}
                   placeholder="category-slug"
-                  className={editingCategory ? "bg-gray-50" : ""}
+                  className={`bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500 ${editingCategory ? "opacity-50 cursor-not-allowed" : ""}`}
                 />
                 {editingCategory && (
                   <p className="text-xs text-gray-500">Slug cannot be changed after creation</p>
                 )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description" className="text-gray-300">Description</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Category description"
                   rows={3}
+                  className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Category Image</Label>
+                <Label className="text-gray-300">Category Image</Label>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setMediaPickerOpen(true)}
-                  className="w-full"
+                  className="w-full bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
                 >
                   <ImageIcon className="w-4 h-4 mr-2" />
                   Select from Library
@@ -391,7 +393,7 @@ export default function CategoriesPage() {
 
                 {/* Selected Image Preview */}
                 {selectedImage && (
-                  <div className="relative w-full h-40 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
+                  <div className="relative w-full h-40 rounded-md overflow-hidden bg-white/5 border border-white/10">
                     <img
                       src={selectedImage}
                       alt="Category preview"
@@ -402,14 +404,14 @@ export default function CategoriesPage() {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+                    <span className="w-full border-t border-white/10" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-gray-500">Or</span>
+                    <span className="bg-dark-bg-card px-2 text-gray-500">Or</span>
                   </div>
                 </div>
 
-                <Label htmlFor="image">Enter image URL manually</Label>
+                <Label htmlFor="image" className="text-gray-300">Enter image URL manually</Label>
                 <Input
                   id="image"
                   value={formData.image}
@@ -418,6 +420,7 @@ export default function CategoriesPage() {
                     setSelectedImage(e.target.value);
                   }}
                   placeholder="https://example.com/image.jpg"
+                  className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                 />
               </div>
             </div>
@@ -427,10 +430,11 @@ export default function CategoriesPage() {
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
                 disabled={isSubmitting}
+                className="bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} className="bg-brand-600 hover:bg-brand-700 text-white">
                 {isSubmitting ? "Saving..." : editingCategory ? "Update Category" : "Create Category"}
               </Button>
             </DialogFooter>

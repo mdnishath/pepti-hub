@@ -256,30 +256,30 @@ export default function OrdersPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-            <p className="text-gray-600 mt-1">Manage customer orders</p>
+            <h1 className="text-2xl font-bold text-gray-100">Orders</h1>
+            <p className="text-gray-400 mt-1">Manage customer orders</p>
           </div>
-          <Button onClick={() => handleOpenDialog()} className="flex items-center space-x-2">
+          <Button onClick={() => handleOpenDialog()} className="flex items-center space-x-2 bg-brand-600 hover:bg-brand-700 text-white border-0">
             <Package className="w-4 h-4" />
             <span>Create Order</span>
           </Button>
         </div>
       </div>
 
-      <Card>
+      <Card className="bg-dark-bg-card border-white/5">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>All Orders</CardTitle>
-              <CardDescription>Manage all customer orders ({orders.length} total)</CardDescription>
+              <CardTitle className="text-gray-100">All Orders</CardTitle>
+              <CardDescription className="text-gray-400">Manage all customer orders ({orders.length} total)</CardDescription>
             </div>
             <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
               <Input
                 placeholder="Search by order number or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
               />
             </div>
           </div>
@@ -302,55 +302,55 @@ export default function OrdersPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Order Number</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Payment</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-white/5 hover:bg-white/5">
+                  <TableHead className="text-gray-400">Order Number</TableHead>
+                  <TableHead className="text-gray-400">Customer</TableHead>
+                  <TableHead className="text-gray-400">Total</TableHead>
+                  <TableHead className="text-gray-400">Status</TableHead>
+                  <TableHead className="text-gray-400">Payment</TableHead>
+                  <TableHead className="text-gray-400">Date</TableHead>
+                  <TableHead className="text-right text-gray-400">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredOrders.map((order) => (
-                  <TableRow key={order.id} className="hover:bg-gray-50">
+                  <TableRow key={order.id} className="border-white/5 hover:bg-white/5">
                     <TableCell>
-                      <p className="font-medium text-gray-900">{order.orderNumber}</p>
+                      <p className="font-medium text-gray-100">{order.orderNumber}</p>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium text-gray-900">{order.shippingAddress.fullName}</p>
+                        <p className="font-medium text-gray-100">{order.shippingAddress.fullName}</p>
                         {order.user?.email && (
-                          <p className="text-sm text-gray-500">{order.user.email}</p>
+                          <p className="text-sm text-gray-400">{order.user.email}</p>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium text-gray-900">
+                    <TableCell className="font-medium text-gray-100">
                       ${Number(order.total).toFixed(2)}
                     </TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
                     <TableCell>{getPaymentStatusBadge(order.paymentStatus)}</TableCell>
-                    <TableCell className="text-gray-600">
+                    <TableCell className="text-gray-400">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/10">
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-dark-bg-card border-white/10 text-gray-100">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleOpenDialog(order)}>
+                          <DropdownMenuSeparator className="bg-white/10" />
+                          <DropdownMenuItem onClick={() => handleOpenDialog(order)} className="focus:bg-white/10 focus:text-white cursor-pointer">
                             <Edit className="w-4 h-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuSeparator className="bg-white/10" />
                           <DropdownMenuItem
-                            className="text-red-600"
+                            className="text-red-500 focus:bg-red-500/10 focus:text-red-400 cursor-pointer"
                             onClick={() => handleDeleteClick(order.id)}
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
@@ -369,10 +369,10 @@ export default function OrdersPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-dark-bg-card border-white/10 text-gray-100 custom-scrollbar">
           <DialogHeader>
-            <DialogTitle>{editingOrder ? "Edit Order" : "Create New Order"}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">{editingOrder ? "Edit Order" : "Create New Order"}</DialogTitle>
+            <DialogDescription className="text-gray-400">
               {editingOrder
                 ? "Update the order details below."
                 : "Fill in the details to create a new order."}
@@ -383,69 +383,71 @@ export default function OrdersPage() {
               {editingOrder ? (
                 <>
                   <div className="grid gap-2">
-                    <Label htmlFor="status">Order Status</Label>
+                    <Label htmlFor="status" className="text-gray-300">Order Status</Label>
                     <Select
                       value={formData.status}
                       onValueChange={(value) => setFormData({ ...formData, status: value as OrderStatus })}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white/5 border-white/10 text-gray-100 focus:ring-0 focus:ring-offset-0 focus:border-brand-500">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PENDING">Pending</SelectItem>
-                        <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-                        <SelectItem value="PROCESSING">Processing</SelectItem>
-                        <SelectItem value="SHIPPED">Shipped</SelectItem>
-                        <SelectItem value="DELIVERED">Delivered</SelectItem>
-                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                        <SelectItem value="REFUNDED">Refunded</SelectItem>
+                      <SelectContent className="bg-dark-bg-card border-white/10 text-gray-100">
+                        <SelectItem value="PENDING" className="focus:bg-white/10 focus:text-white cursor-pointer">Pending</SelectItem>
+                        <SelectItem value="CONFIRMED" className="focus:bg-white/10 focus:text-white cursor-pointer">Confirmed</SelectItem>
+                        <SelectItem value="PROCESSING" className="focus:bg-white/10 focus:text-white cursor-pointer">Processing</SelectItem>
+                        <SelectItem value="SHIPPED" className="focus:bg-white/10 focus:text-white cursor-pointer">Shipped</SelectItem>
+                        <SelectItem value="DELIVERED" className="focus:bg-white/10 focus:text-white cursor-pointer">Delivered</SelectItem>
+                        <SelectItem value="CANCELLED" className="focus:bg-white/10 focus:text-white cursor-pointer">Cancelled</SelectItem>
+                        <SelectItem value="REFUNDED" className="focus:bg-white/10 focus:text-white cursor-pointer">Refunded</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="paymentStatus">Payment Status</Label>
+                    <Label htmlFor="paymentStatus" className="text-gray-300">Payment Status</Label>
                     <Select
                       value={formData.paymentStatus}
                       onValueChange={(value) => setFormData({ ...formData, paymentStatus: value as PaymentStatus })}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white/5 border-white/10 text-gray-100 focus:ring-0 focus:ring-offset-0 focus:border-brand-500">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="UNPAID">Unpaid</SelectItem>
-                        <SelectItem value="PAID">Paid</SelectItem>
-                        <SelectItem value="PARTIALLY_PAID">Partially Paid</SelectItem>
-                        <SelectItem value="REFUNDED">Refunded</SelectItem>
+                      <SelectContent className="bg-dark-bg-card border-white/10 text-gray-100">
+                        <SelectItem value="UNPAID" className="focus:bg-white/10 focus:text-white cursor-pointer">Unpaid</SelectItem>
+                        <SelectItem value="PAID" className="focus:bg-white/10 focus:text-white cursor-pointer">Paid</SelectItem>
+                        <SelectItem value="PARTIALLY_PAID" className="focus:bg-white/10 focus:text-white cursor-pointer">Partially Paid</SelectItem>
+                        <SelectItem value="REFUNDED" className="focus:bg-white/10 focus:text-white cursor-pointer">Refunded</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="trackingNumber">Tracking Number</Label>
+                    <Label htmlFor="trackingNumber" className="text-gray-300">Tracking Number</Label>
                     <Input
                       id="trackingNumber"
                       value={formData.trackingNumber}
                       onChange={(e) => setFormData({ ...formData, trackingNumber: e.target.value })}
                       placeholder="TRACK123456"
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="adminNote">Admin Note</Label>
+                    <Label htmlFor="adminNote" className="text-gray-300">Admin Note</Label>
                     <Textarea
                       id="adminNote"
                       value={formData.adminNote}
                       onChange={(e) => setFormData({ ...formData, adminNote: e.target.value })}
                       placeholder="Internal notes for admins..."
                       rows={3}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                     />
                   </div>
                 </>
               ) : (
                 <>
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900">Shipping Address</h3>
+                    <h3 className="font-semibold text-gray-100">Shipping Address</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="fullName">Full Name *</Label>
+                        <Label htmlFor="fullName" className="text-gray-300">Full Name *</Label>
                         <Input
                           id="fullName"
                           value={formData.shippingAddress.fullName}
@@ -454,10 +456,11 @@ export default function OrdersPage() {
                             shippingAddress: { ...formData.shippingAddress, fullName: e.target.value }
                           })}
                           required
+                          className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                         />
                       </div>
                       <div className="grid gap-2">
-                        <Label htmlFor="phone">Phone *</Label>
+                        <Label htmlFor="phone" className="text-gray-300">Phone *</Label>
                         <Input
                           id="phone"
                           value={formData.shippingAddress.phone}
@@ -466,11 +469,12 @@ export default function OrdersPage() {
                             shippingAddress: { ...formData.shippingAddress, phone: e.target.value }
                           })}
                           required
+                          className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                         />
                       </div>
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="addressLine1">Address Line 1 *</Label>
+                      <Label htmlFor="addressLine1" className="text-gray-300">Address Line 1 *</Label>
                       <Input
                         id="addressLine1"
                         value={formData.shippingAddress.addressLine1}
@@ -479,10 +483,11 @@ export default function OrdersPage() {
                           shippingAddress: { ...formData.shippingAddress, addressLine1: e.target.value }
                         })}
                         required
+                        className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="addressLine2">Address Line 2</Label>
+                      <Label htmlFor="addressLine2" className="text-gray-300">Address Line 2</Label>
                       <Input
                         id="addressLine2"
                         value={formData.shippingAddress.addressLine2}
@@ -490,11 +495,12 @@ export default function OrdersPage() {
                           ...formData,
                           shippingAddress: { ...formData.shippingAddress, addressLine2: e.target.value }
                         })}
+                        className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                       />
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="city">City *</Label>
+                        <Label htmlFor="city" className="text-gray-300">City *</Label>
                         <Input
                           id="city"
                           value={formData.shippingAddress.city}
@@ -503,10 +509,11 @@ export default function OrdersPage() {
                             shippingAddress: { ...formData.shippingAddress, city: e.target.value }
                           })}
                           required
+                          className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                         />
                       </div>
                       <div className="grid gap-2">
-                        <Label htmlFor="state">State *</Label>
+                        <Label htmlFor="state" className="text-gray-300">State *</Label>
                         <Input
                           id="state"
                           value={formData.shippingAddress.state}
@@ -515,10 +522,11 @@ export default function OrdersPage() {
                             shippingAddress: { ...formData.shippingAddress, state: e.target.value }
                           })}
                           required
+                          className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                         />
                       </div>
                       <div className="grid gap-2">
-                        <Label htmlFor="zipCode">Zip Code *</Label>
+                        <Label htmlFor="zipCode" className="text-gray-300">Zip Code *</Label>
                         <Input
                           id="zipCode"
                           value={formData.shippingAddress.zipCode}
@@ -527,11 +535,12 @@ export default function OrdersPage() {
                             shippingAddress: { ...formData.shippingAddress, zipCode: e.target.value }
                           })}
                           required
+                          className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                         />
                       </div>
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="country">Country *</Label>
+                      <Label htmlFor="country" className="text-gray-300">Country *</Label>
                       <Input
                         id="country"
                         value={formData.shippingAddress.country}
@@ -540,34 +549,36 @@ export default function OrdersPage() {
                           shippingAddress: { ...formData.shippingAddress, country: e.target.value }
                         })}
                         required
+                        className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                       />
                     </div>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="customerNote">Customer Note</Label>
+                    <Label htmlFor="customerNote" className="text-gray-300">Customer Note</Label>
                     <Textarea
                       id="customerNote"
                       value={formData.customerNote}
                       onChange={(e) => setFormData({ ...formData, customerNote: e.target.value })}
                       placeholder="Special delivery instructions..."
                       rows={2}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="paymentMethod">Payment Method</Label>
+                    <Label htmlFor="paymentMethod" className="text-gray-300">Payment Method</Label>
                     <Select
                       value={formData.paymentMethod}
                       onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white/5 border-white/10 text-gray-100 focus:ring-0 focus:ring-offset-0 focus:border-brand-500">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="credit_card">Credit Card</SelectItem>
-                        <SelectItem value="debit_card">Debit Card</SelectItem>
-                        <SelectItem value="paypal">PayPal</SelectItem>
-                        <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                        <SelectItem value="cash_on_delivery">Cash on Delivery</SelectItem>
+                      <SelectContent className="bg-dark-bg-card border-white/10 text-gray-100">
+                        <SelectItem value="credit_card" className="focus:bg-white/10 focus:text-white cursor-pointer">Credit Card</SelectItem>
+                        <SelectItem value="debit_card" className="focus:bg-white/10 focus:text-white cursor-pointer">Debit Card</SelectItem>
+                        <SelectItem value="paypal" className="focus:bg-white/10 focus:text-white cursor-pointer">PayPal</SelectItem>
+                        <SelectItem value="bank_transfer" className="focus:bg-white/10 focus:text-white cursor-pointer">Bank Transfer</SelectItem>
+                        <SelectItem value="cash_on_delivery" className="focus:bg-white/10 focus:text-white cursor-pointer">Cash on Delivery</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -580,10 +591,11 @@ export default function OrdersPage() {
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
                 disabled={isSubmitting}
+                className="bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} className="bg-brand-600 hover:bg-brand-700 text-white">
                 {isSubmitting ? "Saving..." : editingOrder ? "Update Order" : "Create Order"}
               </Button>
             </DialogFooter>
@@ -593,10 +605,10 @@ export default function OrdersPage() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-dark-bg-card border-white/10 text-gray-100">
           <DialogHeader>
-            <DialogTitle>Delete Order</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">Delete Order</DialogTitle>
+            <DialogDescription className="text-gray-400">
               Are you sure you want to delete this order? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -605,10 +617,11 @@ export default function OrdersPage() {
               type="button"
               variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}
+              className="bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
             >
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDeleteConfirm}>
+            <Button type="button" variant="destructive" onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
               Delete
             </Button>
           </DialogFooter>

@@ -48,5 +48,9 @@ export default function AdminRootLayout({
     return null;
   }
 
-  return <AdminLayout>{children}</AdminLayout>;
+  return (
+    <div className="admin-theme min-h-screen bg-dark-bg text-gray-100 font-sans selection:bg-brand-500/30">
+      <AdminLayout>{children}</AdminLayout>
+    </div>
+  );
 }

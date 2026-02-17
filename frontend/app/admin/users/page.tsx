@@ -284,30 +284,30 @@ export default function UsersPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Users</h1>
-            <p className="text-gray-600 mt-1">Manage user accounts and permissions</p>
+            <h1 className="text-2xl font-bold text-gray-100">Users</h1>
+            <p className="text-gray-400 mt-1">Manage user accounts and permissions</p>
           </div>
-          <Button onClick={() => handleOpenDialog()} className="flex items-center space-x-2">
+          <Button onClick={() => handleOpenDialog()} className="flex items-center space-x-2 bg-brand-600 hover:bg-brand-700 text-white border-0">
             <Plus className="w-4 h-4" />
             <span>Add User</span>
           </Button>
         </div>
       </div>
 
-      <Card>
+      <Card className="bg-dark-bg-card border-white/5">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>All Users</CardTitle>
-              <CardDescription>Manage user accounts ({users.length} total)</CardDescription>
+              <CardTitle className="text-gray-100">All Users</CardTitle>
+              <CardDescription className="text-gray-400">Manage user accounts ({users.length} total)</CardDescription>
             </div>
             <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
               <Input
                 placeholder="Search by name or email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
               />
             </div>
           </div>
@@ -330,57 +330,57 @@ export default function UsersPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-white/5 hover:bg-white/5">
+                  <TableHead className="text-gray-400">Name</TableHead>
+                  <TableHead className="text-gray-400">Email</TableHead>
+                  <TableHead className="text-gray-400">Phone</TableHead>
+                  <TableHead className="text-gray-400">Role</TableHead>
+                  <TableHead className="text-gray-400">Status</TableHead>
+                  <TableHead className="text-right text-gray-400">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredUsers.map((u) => (
-                  <TableRow key={u.id} className="hover:bg-gray-50">
+                  <TableRow key={u.id} className="border-white/5 hover:bg-white/5">
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="text-blue-600 font-semibold text-sm">
+                        <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+                          <span className="text-brand-400 font-semibold text-sm">
                             {u.firstName[0]}{u.lastName[0]}
                           </span>
                         </div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-gray-100">
                           {u.firstName} {u.lastName}
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell className="text-gray-600">{u.email}</TableCell>
-                    <TableCell className="text-gray-600">{u.phone || "—"}</TableCell>
+                    <TableCell className="text-gray-400">{u.email}</TableCell>
+                    <TableCell className="text-gray-400">{u.phone || "—"}</TableCell>
                     <TableCell>{getRoleBadge(u.role)}</TableCell>
                     <TableCell>
                       {u.isActive ? (
-                        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>
+                        <Badge className="bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20">Active</Badge>
                       ) : (
-                        <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">Inactive</Badge>
+                        <Badge className="bg-gray-500/10 text-gray-400 border border-gray-500/20 hover:bg-gray-500/20">Inactive</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/10">
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-dark-bg-card border-white/10 text-gray-100">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleOpenDialog(u)}>
+                          <DropdownMenuSeparator className="bg-white/10" />
+                          <DropdownMenuItem onClick={() => handleOpenDialog(u)} className="focus:bg-white/10 focus:text-white cursor-pointer">
                             <Edit className="w-4 h-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuSeparator className="bg-white/10" />
                           <DropdownMenuItem
-                            className="text-red-600"
+                            className="text-red-500 focus:bg-red-500/10 focus:text-red-400 cursor-pointer"
                             onClick={() => handleDeleteClick(u.id)}
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
@@ -399,10 +399,10 @@ export default function UsersPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-dark-bg-card border-white/10 text-gray-100 custom-scrollbar">
           <DialogHeader>
-            <DialogTitle>{editingUser ? "Edit User" : "Add New User"}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">{editingUser ? "Edit User" : "Add New User"}</DialogTitle>
+            <DialogDescription className="text-gray-400">
               {editingUser
                 ? "Update the user details below."
                 : "Fill in the details to create a new user."}
@@ -412,26 +412,28 @@ export default function UsersPage() {
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="firstName">First Name *</Label>
+                  <Label htmlFor="firstName" className="text-gray-300">First Name *</Label>
                   <Input
                     id="firstName"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     required
+                    className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="lastName">Last Name *</Label>
+                  <Label htmlFor="lastName" className="text-gray-300">Last Name *</Label>
                   <Input
                     id="lastName"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     required
+                    className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                   />
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email" className="text-gray-300">Email *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -439,7 +441,7 @@ export default function UsersPage() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                   disabled={!!editingUser}
-                  className={editingUser ? "bg-gray-50" : ""}
+                  className={`bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500 ${editingUser ? "opacity-50 cursor-not-allowed" : ""}`}
                 />
                 {editingUser && (
                   <p className="text-xs text-gray-500">Email cannot be changed after creation</p>
@@ -447,7 +449,7 @@ export default function UsersPage() {
               </div>
               {!editingUser && (
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password *</Label>
+                  <Label htmlFor="password" className="text-gray-300">Password *</Label>
                   <Input
                     id="password"
                     type="password"
@@ -456,33 +458,35 @@ export default function UsersPage() {
                     required={!editingUser}
                     minLength={8}
                     placeholder="Minimum 8 characters"
+                    className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                   />
                 </div>
               )}
               <div className="grid gap-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone" className="text-gray-300">Phone</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="+1234567890"
+                  className="bg-white/5 border-white/10 text-gray-100 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="role">Role *</Label>
+                <Label htmlFor="role" className="text-gray-300">Role *</Label>
                 <Select
                   value={formData.role}
                   onValueChange={(value) => setFormData({ ...formData, role: value as "SUPER_ADMIN" | "ADMIN" | "CUSTOMER" })}
                   disabled={editingUser?.id === user?.id}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 border-white/10 text-gray-100 focus:ring-0 focus:ring-offset-0 focus:border-brand-500">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="CUSTOMER">Customer</SelectItem>
-                    <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectContent className="bg-dark-bg-card border-white/10 text-gray-100">
+                    <SelectItem value="CUSTOMER" className="focus:bg-white/10 focus:text-white cursor-pointer">Customer</SelectItem>
+                    <SelectItem value="ADMIN" className="focus:bg-white/10 focus:text-white cursor-pointer">Admin</SelectItem>
                     {user?.role === "SUPER_ADMIN" && (
-                      <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+                      <SelectItem value="SUPER_ADMIN" className="focus:bg-white/10 focus:text-white cursor-pointer">Super Admin</SelectItem>
                     )}
                   </SelectContent>
                 </Select>
@@ -495,11 +499,12 @@ export default function UsersPage() {
               </div>
               {editingUser && (
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="isActive">Active Status</Label>
+                  <Label htmlFor="isActive" className="text-gray-300">Active Status</Label>
                   <Switch
                     id="isActive"
                     checked={formData.isActive}
                     onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+                    className="data-[state=checked]:bg-brand-600 data-[state=unchecked]:bg-gray-700"
                   />
                 </div>
               )}
@@ -510,10 +515,11 @@ export default function UsersPage() {
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
                 disabled={isSubmitting}
+                className="bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} className="bg-brand-600 hover:bg-brand-700 text-white">
                 {isSubmitting ? "Saving..." : editingUser ? "Update User" : "Create User"}
               </Button>
             </DialogFooter>
@@ -523,10 +529,10 @@ export default function UsersPage() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-dark-bg-card border-white/10 text-gray-100">
           <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">Delete User</DialogTitle>
+            <DialogDescription className="text-gray-400">
               Are you sure you want to delete this user? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -535,10 +541,11 @@ export default function UsersPage() {
               type="button"
               variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}
+              className="bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
             >
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDeleteConfirm}>
+            <Button type="button" variant="destructive" onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
               Delete
             </Button>
           </DialogFooter>

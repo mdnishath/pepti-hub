@@ -170,68 +170,68 @@ export default function ContactsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Contact Messages</h1>
-            <p className="text-gray-600 mt-1">View and manage customer inquiries</p>
+            <h1 className="text-2xl font-bold text-gray-100">Contact Messages</h1>
+            <p className="text-gray-400 mt-1">View and manage customer inquiries</p>
           </div>
         </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
+        <Card className="bg-dark-bg-card border-white/5">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Messages</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-400">Total Messages</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-2xl font-bold text-gray-100">{stats.total}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-dark-bg-card border-white/5">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Unread</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-400">Unread</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{stats.unread}</div>
+            <div className="text-2xl font-bold text-orange-400">{stats.unread}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-dark-bg-card border-white/5">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Read</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-400">Read</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.read}</div>
+            <div className="text-2xl font-bold text-green-400">{stats.read}</div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card className="bg-dark-bg-card border-white/5">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <CardTitle>All Messages</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-gray-100">All Messages</CardTitle>
+              <CardDescription className="text-gray-400">
                 {filteredContacts.length} message{filteredContacts.length !== 1 ? "s" : ""}
               </CardDescription>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
                 <Input
                   placeholder="Search messages..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-600 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-brand-500"
                 />
               </div>
               <Select value={filterStatus} onValueChange={(value: any) => setFilterStatus(value)}>
-                <SelectTrigger className="w-full sm:w-[140px]">
-                  <Filter className="w-4 h-4 mr-2" />
+                <SelectTrigger className="w-full sm:w-[140px] bg-white/5 border-white/10 text-gray-100 focus:ring-0 focus:ring-offset-0 focus:border-brand-500">
+                  <Filter className="w-4 h-4 mr-2 text-gray-400" />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Messages</SelectItem>
-                  <SelectItem value="unread">Unread</SelectItem>
-                  <SelectItem value="read">Read</SelectItem>
+                <SelectContent className="bg-dark-bg-card border-white/10 text-gray-100">
+                  <SelectItem value="all" className="focus:bg-white/10 focus:text-white cursor-pointer">All Messages</SelectItem>
+                  <SelectItem value="unread" className="focus:bg-white/10 focus:text-white cursor-pointer">Unread</SelectItem>
+                  <SelectItem value="read" className="focus:bg-white/10 focus:text-white cursor-pointer">Read</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -240,42 +240,42 @@ export default function ContactsPage() {
         <CardContent>
           {loadingData ? (
             <div className="text-center py-12">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-              <p className="mt-4 text-sm text-gray-600">Loading messages...</p>
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-600 border-r-transparent"></div>
+              <p className="mt-4 text-sm text-gray-400">Loading messages...</p>
             </div>
           ) : filteredContacts.length === 0 ? (
             <div className="text-center py-12">
-              <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No messages found</p>
+              <Mail className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400">No messages found</p>
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Message Preview</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-b border-white/10 hover:bg-white/5">
+                  <TableHead className="text-gray-400">Status</TableHead>
+                  <TableHead className="text-gray-400">Name</TableHead>
+                  <TableHead className="text-gray-400">Email</TableHead>
+                  <TableHead className="text-gray-400">Message Preview</TableHead>
+                  <TableHead className="text-gray-400">Date</TableHead>
+                  <TableHead className="text-right text-gray-400">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredContacts.map((contact) => (
-                  <TableRow key={contact.id} className={!contact.isRead ? "bg-blue-50/50" : ""}>
+                  <TableRow key={contact.id} className={`${!contact.isRead ? "bg-brand-500/5 hover:bg-brand-500/10" : "hover:bg-white/5"} border-b border-white/5`}>
                     <TableCell>
                       {contact.isRead ? (
-                        <MailOpen className="w-4 h-4 text-gray-400" />
+                        <MailOpen className="w-4 h-4 text-gray-500" />
                       ) : (
-                        <Mail className="w-4 h-4 text-blue-600" />
+                        <Mail className="w-4 h-4 text-brand-400" />
                       )}
                     </TableCell>
-                    <TableCell className="font-medium">{contact.name}</TableCell>
-                    <TableCell className="text-gray-600">{contact.email}</TableCell>
-                    <TableCell className="max-w-xs truncate text-gray-600">
+                    <TableCell className="font-medium text-gray-100">{contact.name}</TableCell>
+                    <TableCell className="text-gray-400">{contact.email}</TableCell>
+                    <TableCell className="max-w-xs truncate text-gray-400">
                       {contact.message}
                     </TableCell>
-                    <TableCell className="text-gray-600">
+                    <TableCell className="text-gray-400">
                       {new Date(contact.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
@@ -284,6 +284,7 @@ export default function ContactsPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleView(contact)}
+                          className="text-gray-400 hover:text-white hover:bg-white/10"
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
@@ -291,7 +292,7 @@ export default function ContactsPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteClick(contact.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -307,31 +308,31 @@ export default function ContactsPage() {
 
       {/* View Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-dark-bg-card border-white/10 text-gray-100">
           <DialogHeader>
-            <DialogTitle>Contact Message</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">Contact Message</DialogTitle>
+            <DialogDescription className="text-gray-400">
               Received on {selectedContact && new Date(selectedContact.createdAt).toLocaleString()}
             </DialogDescription>
           </DialogHeader>
           {selectedContact && (
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-semibold text-gray-600">Name</p>
-                <p className="text-base">{selectedContact.name}</p>
+                <p className="text-sm font-semibold text-gray-400">Name</p>
+                <p className="text-base text-gray-100">{selectedContact.name}</p>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-600">Email</p>
-                <p className="text-base">{selectedContact.email}</p>
+                <p className="text-sm font-semibold text-gray-400">Email</p>
+                <p className="text-base text-gray-100">{selectedContact.email}</p>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-600">Message</p>
-                <p className="text-base whitespace-pre-wrap">{selectedContact.message}</p>
+                <p className="text-sm font-semibold text-gray-400">Message</p>
+                <p className="text-base whitespace-pre-wrap text-gray-100">{selectedContact.message}</p>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsViewDialogOpen(false)} className="bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">
               Close
             </Button>
             <Button
@@ -340,6 +341,7 @@ export default function ContactsPage() {
                   window.location.href = `mailto:${selectedContact.email}`;
                 }
               }}
+              className="bg-brand-600 hover:bg-brand-700 text-white"
             >
               <Mail className="w-4 h-4 mr-2" />
               Reply via Email
@@ -350,18 +352,18 @@ export default function ContactsPage() {
 
       {/* Delete Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-dark-bg-card border-white/10 text-gray-100">
           <DialogHeader>
-            <DialogTitle>Delete Contact Message</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">Delete Contact Message</DialogTitle>
+            <DialogDescription className="text-gray-400">
               Are you sure you want to delete this message? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} className="bg-transparent border-white/10 text-gray-300 hover:bg-white/10 hover:text-white">
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>
+            <Button variant="destructive" onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
               Delete
             </Button>
           </DialogFooter>

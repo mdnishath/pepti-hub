@@ -110,6 +110,8 @@ export default function SettingsPage() {
           stripeKey: null,
           sslcommerzKey: null,
           emailFrom: null,
+          contactNotificationEmail: 'info@peptihub.com',
+          orderNotificationEmail: 'orders@peptihub.com',
           smtpConfig: null,
           isActive: true,
           plan: 'BASIC',
@@ -267,267 +269,281 @@ export default function SettingsPage() {
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your store configuration and preferences</p>
+        <h1 className="text-2xl font-bold text-gray-100">Settings</h1>
+        <p className="text-gray-400 mt-1">Manage your store configuration and preferences</p>
       </div>
 
       {loadingTenant ? (
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-            <p className="mt-4 text-sm text-gray-600">Loading settings...</p>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-600 border-r-transparent"></div>
+            <p className="mt-4 text-sm text-gray-400">Loading settings...</p>
           </div>
         </div>
       ) : (
         <Tabs defaultValue="general" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="general">
-            <Store className="w-4 h-4 mr-2" />
-            General
-          </TabsTrigger>
-          <TabsTrigger value="email">
-            <Mail className="w-4 h-4 mr-2" />
-            Email
-          </TabsTrigger>
-          <TabsTrigger value="payment">
-            <CreditCard className="w-4 h-4 mr-2" />
-            Payment
-          </TabsTrigger>
-        </TabsList>
+          <TabsList className="bg-white/5 border border-white/10">
+            <TabsTrigger value="general" className="data-[state=active]:bg-brand-600 data-[state=active]:text-white text-gray-400">
+              <Store className="w-4 h-4 mr-2" />
+              General
+            </TabsTrigger>
+            <TabsTrigger value="email" className="data-[state=active]:bg-brand-600 data-[state=active]:text-white text-gray-400">
+              <Mail className="w-4 h-4 mr-2" />
+              Email
+            </TabsTrigger>
+            <TabsTrigger value="payment" className="data-[state=active]:bg-brand-600 data-[state=active]:text-white text-gray-400">
+              <CreditCard className="w-4 h-4 mr-2" />
+              Payment
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="general">
-          <Card>
-            <CardHeader>
-              <CardTitle>Store Information</CardTitle>
-              <CardDescription>Update your store details and contact information</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TabsContent value="general">
+            <Card className="bg-dark-bg-card border-white/5">
+              <CardHeader>
+                <CardTitle className="text-gray-100">Store Information</CardTitle>
+                <CardDescription className="text-gray-400">Update your store details and contact information</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="storeName" className="text-gray-300">Store Name</Label>
+                    <Input
+                      id="storeName"
+                      value={storeName}
+                      onChange={(e) => setStoreName(e.target.value)}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="storeEmail" className="text-gray-300">Store Email</Label>
+                    <Input
+                      id="storeEmail"
+                      type="email"
+                      value={storeEmail}
+                      onChange={(e) => setStoreEmail(e.target.value)}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="storePhone" className="text-gray-300">Phone Number</Label>
+                    <Input
+                      id="storePhone"
+                      value={storePhone}
+                      onChange={(e) => setStorePhone(e.target.value)}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="currency" className="text-gray-300">Currency</Label>
+                    <Input
+                      id="currency"
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value)}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="storeName">Store Name</Label>
-                  <Input
-                    id="storeName"
-                    value={storeName}
-                    onChange={(e) => setStoreName(e.target.value)}
+                  <Label htmlFor="storeAddress" className="text-gray-300">Store Address</Label>
+                  <Textarea
+                    id="storeAddress"
+                    value={storeAddress}
+                    onChange={(e) => setStoreAddress(e.target.value)}
+                    rows={3}
+                    className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="storeEmail">Store Email</Label>
+                  <Label htmlFor="taxRate" className="text-gray-300">Tax Rate (%)</Label>
                   <Input
-                    id="storeEmail"
+                    id="taxRate"
+                    type="number"
+                    value={taxRate}
+                    onChange={(e) => setTaxRate(e.target.value)}
+                    className="max-w-xs bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <Button onClick={handleSaveGeneral} disabled={saving} className="bg-brand-600 hover:bg-brand-700 text-white">
+                    <Save className="w-4 h-4 mr-2" />
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="email">
+            <Card className="bg-dark-bg-card border-white/5">
+              <CardHeader>
+                <CardTitle className="text-gray-100">Email Configuration</CardTitle>
+                <CardDescription className="text-gray-400">Configure SMTP settings for sending emails</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="emailFrom" className="text-gray-300">Email From Address</Label>
+                  <Input
+                    id="emailFrom"
                     type="email"
-                    value={storeEmail}
-                    onChange={(e) => setStoreEmail(e.target.value)}
+                    value={emailFrom}
+                    onChange={(e) => setEmailFrom(e.target.value)}
+                    placeholder="noreply@yourstore.com"
+                    className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="storePhone">Phone Number</Label>
-                  <Input
-                    id="storePhone"
-                    value={storePhone}
-                    onChange={(e) => setStorePhone(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="currency">Currency</Label>
-                  <Input
-                    id="currency"
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="storeAddress">Store Address</Label>
-                <Textarea
-                  id="storeAddress"
-                  value={storeAddress}
-                  onChange={(e) => setStoreAddress(e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="taxRate">Tax Rate (%)</Label>
-                <Input
-                  id="taxRate"
-                  type="number"
-                  value={taxRate}
-                  onChange={(e) => setTaxRate(e.target.value)}
-                  className="max-w-xs"
-                />
-              </div>
-
-              <div className="flex justify-end">
-                <Button onClick={handleSaveGeneral} disabled={saving}>
-                  <Save className="w-4 h-4 mr-2" />
-                  {saving ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="email">
-          <Card>
-            <CardHeader>
-              <CardTitle>Email Configuration</CardTitle>
-              <CardDescription>Configure SMTP settings for sending emails</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="emailFrom">Email From Address</Label>
-                <Input
-                  id="emailFrom"
-                  type="email"
-                  value={emailFrom}
-                  onChange={(e) => setEmailFrom(e.target.value)}
-                  placeholder="noreply@yourstore.com"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="contactNotificationEmail">Contact Notification Email</Label>
-                  <Input
-                    id="contactNotificationEmail"
-                    type="email"
-                    value={contactNotificationEmail}
-                    onChange={(e) => setContactNotificationEmail(e.target.value)}
-                    placeholder="contact@yourstore.com"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Email address to receive contact form notifications
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="orderNotificationEmail">Order Notification Email</Label>
-                  <Input
-                    id="orderNotificationEmail"
-                    type="email"
-                    value={orderNotificationEmail}
-                    onChange={(e) => setOrderNotificationEmail(e.target.value)}
-                    placeholder="orders@yourstore.com"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Email address to receive order notifications
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="smtpHost">SMTP Host</Label>
-                  <Input
-                    id="smtpHost"
-                    value={smtpHost}
-                    onChange={(e) => setSmtpHost(e.target.value)}
-                    placeholder="smtp.gmail.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="smtpPort">SMTP Port</Label>
-                  <Input
-                    id="smtpPort"
-                    value={smtpPort}
-                    onChange={(e) => setSmtpPort(e.target.value)}
-                    placeholder="587"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="smtpUser">SMTP Username</Label>
-                  <Input
-                    id="smtpUser"
-                    type="email"
-                    value={smtpUser}
-                    onChange={(e) => setSmtpUser(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="smtpPass">SMTP Password</Label>
-                  <Input
-                    id="smtpPass"
-                    type="password"
-                    value={smtpPassword}
-                    onChange={(e) => setSmtpPassword(e.target.value)}
-                    placeholder={hasExistingPassword ? "Leave as ••••••••  to keep existing" : "Enter SMTP password"}
-                  />
-                  {hasExistingPassword && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="contactNotificationEmail" className="text-gray-300">Contact Notification Email</Label>
+                    <Input
+                      id="contactNotificationEmail"
+                      type="email"
+                      value={contactNotificationEmail}
+                      onChange={(e) => setContactNotificationEmail(e.target.value)}
+                      placeholder="contact@yourstore.com"
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
                     <p className="text-xs text-gray-500">
-                      Password is saved. Leave as ••••••••  to keep existing, or enter new password to update.
+                      Email address to receive contact form notifications
                     </p>
-                  )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="orderNotificationEmail" className="text-gray-300">Order Notification Email</Label>
+                    <Input
+                      id="orderNotificationEmail"
+                      type="email"
+                      value={orderNotificationEmail}
+                      onChange={(e) => setOrderNotificationEmail(e.target.value)}
+                      placeholder="orders@yourstore.com"
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                    <p className="text-xs text-gray-500">
+                      Email address to receive order notifications
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex justify-end">
-                <Button onClick={handleSaveEmail} disabled={saving}>
-                  <Save className="w-4 h-4 mr-2" />
-                  {saving ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="payment">
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Gateways</CardTitle>
-              <CardDescription>Configure payment processing settings</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="p-4 border rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-4">Stripe</h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="stripeKey">API Key</Label>
-                      <Input
-                        id="stripeKey"
-                        type="password"
-                        value={stripeKey}
-                        onChange={(e) => setStripeKey(e.target.value)}
-                        placeholder="sk_test_... or sk_live_..."
-                      />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="smtpHost" className="text-gray-300">SMTP Host</Label>
+                    <Input
+                      id="smtpHost"
+                      value={smtpHost}
+                      onChange={(e) => setSmtpHost(e.target.value)}
+                      placeholder="smtp.gmail.com"
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="smtpPort" className="text-gray-300">SMTP Port</Label>
+                    <Input
+                      id="smtpPort"
+                      value={smtpPort}
+                      onChange={(e) => setSmtpPort(e.target.value)}
+                      placeholder="587"
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="smtpUser" className="text-gray-300">SMTP Username</Label>
+                    <Input
+                      id="smtpUser"
+                      type="email"
+                      value={smtpUser}
+                      onChange={(e) => setSmtpUser(e.target.value)}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="smtpPass" className="text-gray-300">SMTP Password</Label>
+                    <Input
+                      id="smtpPass"
+                      type="password"
+                      value={smtpPassword}
+                      onChange={(e) => setSmtpPassword(e.target.value)}
+                      placeholder={hasExistingPassword ? "Leave as ••••••••  to keep existing" : "Enter SMTP password"}
+                      className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                    />
+                    {hasExistingPassword && (
                       <p className="text-xs text-gray-500">
-                        Leave as ******** to keep existing key, or enter new key to update
+                        Password is saved. Leave as ••••••••  to keep existing, or enter new password to update.
                       </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button onClick={handleSaveEmail} disabled={saving} className="bg-brand-600 hover:bg-brand-700 text-white">
+                    <Save className="w-4 h-4 mr-2" />
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="payment">
+            <Card className="bg-dark-bg-card border-white/5">
+              <CardHeader>
+                <CardTitle className="text-gray-100">Payment Gateways</CardTitle>
+                <CardDescription className="text-gray-400">Configure payment processing settings</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="p-4 border border-white/10 rounded-lg bg-white/5">
+                    <h3 className="font-semibold text-gray-100 mb-4">Stripe</h3>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="stripeKey" className="text-gray-300">API Key</Label>
+                        <Input
+                          id="stripeKey"
+                          type="password"
+                          value={stripeKey}
+                          onChange={(e) => setStripeKey(e.target.value)}
+                          placeholder="sk_test_... or sk_live_..."
+                          className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                        />
+                        <p className="text-xs text-gray-500">
+                          Leave as ******** to keep existing key, or enter new key to update
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 border border-white/10 rounded-lg bg-white/5">
+                    <h3 className="font-semibold text-gray-100 mb-4">SSLCommerz</h3>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="sslcommerzKey" className="text-gray-300">Store Key</Label>
+                        <Input
+                          id="sslcommerzKey"
+                          type="password"
+                          value={sslcommerzKey}
+                          onChange={(e) => setSslcommerzKey(e.target.value)}
+                          placeholder="Enter your SSLCommerz store key"
+                          className="bg-white/5 border-white/10 text-gray-100 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-0 focus-visible:border-brand-500"
+                        />
+                        <p className="text-xs text-gray-500">
+                          Leave as ******** to keep existing key, or enter new key to update
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 border rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-4">SSLCommerz</h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="sslcommerzKey">Store Key</Label>
-                      <Input
-                        id="sslcommerzKey"
-                        type="password"
-                        value={sslcommerzKey}
-                        onChange={(e) => setSslcommerzKey(e.target.value)}
-                        placeholder="Enter your SSLCommerz store key"
-                      />
-                      <p className="text-xs text-gray-500">
-                        Leave as ******** to keep existing key, or enter new key to update
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex justify-end">
+                  <Button onClick={handleSavePayment} disabled={saving} className="bg-brand-600 hover:bg-brand-700 text-white">
+                    <Save className="w-4 h-4 mr-2" />
+                    {saving ? "Saving..." : "Save Changes"}
+                  </Button>
                 </div>
-              </div>
-
-              <div className="flex justify-end">
-                <Button onClick={handleSavePayment} disabled={saving}>
-                  <Save className="w-4 h-4 mr-2" />
-                  {saving ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       )}
     </>
   );

@@ -136,6 +136,7 @@ export interface Product {
   name: string;
   slug: string;
   description: string | null;
+  shortDescription?: string | null;
   price: number;
   stock: number;
   sku: string | null;
@@ -178,6 +179,7 @@ export interface CreateProductRequest {
 export interface UpdateProductRequest {
   name?: string;
   description?: string;
+  shortDescription?: string;
   price?: number;
   stock?: number;
   sku?: string;

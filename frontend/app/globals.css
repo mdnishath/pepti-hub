@@ -52,43 +52,64 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 231 84% 5%;
+    /* #020618 */
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+
+    --card: 232 58% 14%;
+    /* #0f1736 */
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+
+    --popover: 231 84% 5%;
     --popover-foreground: 210 40% 98%;
+
     --primary: 185 52% 50%;
+    /* #3db7c2 matches brand-400 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 17.5%;
+
+    --secondary: 232 58% 14%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
+
+    --muted: 232 40% 20%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+
+    --accent: 185 52% 50%;
+    --accent-foreground: 0 0% 100%;
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+
+    --border: 232 40% 20%;
+    --input: 232 40% 20%;
+    --ring: 185 52% 50%;
+
     --deep-blue: 209 53% 23%;
     --deep-blue-foreground: 0 0% 100%;
-    --surface: 222 40% 8%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+
+    --surface: 231 84% 5%;
+
+    --sidebar-background: 232 58% 10%;
+    /* #0b122b */
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 185 52% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 232 58% 14%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 232 40% 20%;
+    --sidebar-ring: 185 52% 50%;
   }
+}
+
+/* Force dark mode for admin pages helper class */
+.admin-theme {
+  color-scheme: dark;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', sans-serif;
@@ -100,7 +121,28 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  }
+
+  /* For Firefox */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
   }
 }

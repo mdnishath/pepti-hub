@@ -75,11 +75,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-dark-bg text-gray-100">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -87,32 +87,35 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-72 bg-dark-bg-lighter border-r border-white/10 transform transition-transform duration-300 ease-in-out lg:static lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-          <Link href="/admin/dashboard" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">
+        <div className="flex items-center justify-between h-20 px-6 border-b border-white/10">
+          <Link href="/admin/dashboard" className="flex items-center space-x-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-brand-400 to-brand-600 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:shadow-brand-500/40 transition-shadow">
+              <span className="text-white font-bold text-xl">
                 {tenant?.name?.[0]?.toUpperCase() || 'P'}
               </span>
             </div>
-            <span className="text-xl font-bold text-gray-900">
-              {tenant?.name || 'Pepti Hub'}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-gray-100 tracking-tight">
+                {tenant?.name || 'Pepti Hub'}
+              </span>
+              <span className="text-xs text-brand-400 font-medium tracking-wider uppercase">Admin Panel</span>
+            </div>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-gray-500 hover:text-gray-700"
+            className="lg:hidden text-gray-400 hover:text-white transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto no-scrollbar">
           {navigation.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             const Icon = item.icon;
@@ -123,16 +126,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
                 className={cn(
-                  "flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 group relative overflow-hidden",
                   isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-brand-500/10 text-brand-400"
+                    : "text-gray-400 hover:bg-white/5 hover:text-gray-100"
                 )}
               >
-                <Icon className="w-5 h-5" />
+                {isActive && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-500 rounded-r-full" />
+                )}
+                <Icon className={cn("w-5 h-5 transition-colors", isActive ? "text-brand-400" : "text-gray-500 group-hover:text-gray-300")} />
                 <span className="flex-1">{item.name}</span>
                 {item.badge && (
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="outline" className="border-brand-500/30 text-brand-400 bg-brand-500/10 text-[10px] px-2 py-0.5 h-auto">
                     {item.badge}
                   </Badge>
                 )}
@@ -142,32 +148,32 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </nav>
 
         {/* Sidebar Footer - User Info */}
-        <div className="border-t border-gray-200 p-4">
+        <div className="border-t border-white/10 p-4 m-4 bg-white/5 rounded-2xl">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center space-x-3 w-full px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
+              <button className="flex items-center space-x-3 w-full p-2 rounded-lg hover:bg-white/5 transition-colors">
+                <div className="w-10 h-10 bg-brand-900 rounded-full flex items-center justify-center border-2 border-brand-500/30">
+                  <span className="text-brand-300 font-semibold text-sm">
                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </span>
                 </div>
-                <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="flex-1 text-left overflow-hidden">
+                  <p className="text-sm font-semibold text-gray-200 truncate">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <p className="text-xs text-gray-500">{user?.role}</p>
+                  <p className="text-xs text-gray-500 truncate">{user?.role}</p>
                 </div>
                 <ChevronDown className="w-4 h-4 text-gray-500" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <span className="text-sm">{user?.email}</span>
+            <DropdownMenuContent align="end" className="w-60 bg-dark-bg-card border-white/10">
+              <DropdownMenuLabel className="text-gray-400">My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem className="focus:bg-white/5 focus:text-white">
+                <span className="text-sm text-gray-300">{user?.email}</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+              <DropdownMenuSeparator className="bg-white/10" />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-400 focus:text-red-300 focus:bg-red-500/10">
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </DropdownMenuItem>
@@ -177,34 +183,30 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <div className="lg:pl-64">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-dark-bg">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
-          <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+        <header className="flex-none h-20 bg-dark-bg-lighter/50 backdrop-blur-xl border-b border-white/5 lg:hidden">
+          <div className="flex items-center justify-between h-full px-4 sm:px-6">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-gray-500 hover:text-gray-700"
+              className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors"
             >
               <Menu className="w-6 h-6" />
             </button>
 
-            <div className="flex-1 lg:flex-none">
-              <h1 className="text-lg font-semibold text-gray-900 lg:hidden">
-                Admin Panel
-              </h1>
-            </div>
+            <span className="text-lg font-bold text-gray-100">
+              {tenant?.name || 'Admin'}
+            </span>
 
-            <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="hidden sm:inline-flex">
-                {user?.tenantId}
-              </Badge>
-            </div>
+            <div className="w-8" /> {/* Spacer for centering */}
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="p-4 sm:p-6 lg:p-8">
-          {children}
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>
