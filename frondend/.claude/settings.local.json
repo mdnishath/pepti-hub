@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest pepti-hub-nextjs --typescript --tailwind --app --src-dir --import-alias \"@/*\" --no-turbopack)",
+      "Bash(npx create-next-app@latest pepti-hub-nextjs --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm)",
+      "Bash(npx shadcn@latest init -y)",
+      "Bash(npm run dev)",
+      "Bash(taskkill //F //PID 7568)",
+      "Bash(if exist \"src\" rmdir /s /q \"src\")",
+      "Bash(if exist \"index.html\" del \"index.html\")",
+      "Bash(if exist \"vite.config.ts\" del \"vite.config.ts\")",
+      "Bash(if exist \"vitest.config.ts\" del \"vitest.config.ts\")",
+      "Bash(if exist \"tsconfig.app.json\" del \"tsconfig.app.json\")",
+      "Bash(if exist \"tsconfig.node.json\" del \"tsconfig.node.json\")",
+      "Bash(npm run build)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

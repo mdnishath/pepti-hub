@@ -1,0 +1,486 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { Search, User, ShoppingCart, Menu, X } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { products, bundles } from "@/data/products";
+import { Sparkles } from "lucide-react";
+
+const navLinks = [
+  { label: "All Peptides", href: "/catalog" },
+  { label: "Bundle & Save", href: "/catalog", scrollTo: "bundles-section" },
+  { label: "Quality", href: "/quality" },
+  { label: "Contact Us", href: "/contact" },
+];
+
+/* ── Shared search results dropdown ── */
+const SearchResults = ({
+  filteredProducts,
+  filteredBundles,
+  router,
+  closeSearch,
+}: {
+  filteredProducts: typeof products;
+  filteredBundles: typeof bundles;
+  router: ReturnType<typeof useRouter>;
+  closeSearch: () => void;
+}) => {
+  const hasResults = filteredProducts.length > 0 || filteredBundles.length > 0;
+
+  if (!hasResults) {
+    return (
+      <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+        No results found.
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-2">
+      {filteredProducts.length > 0 && (
+        <>
+          <p className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Products
+          </p>
+          {filteredProducts.map((product) => (
+            <button
+              key={product.id}
+              onClick={() => {
+                router.push(`/product/${product.id}`);
+                closeSearch();
+              }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-accent transition-colors"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-10 w-10 rounded-md object-cover border border-border bg-muted"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">
+                  {product.name}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {product.chemicalName}
+                </p>
+              </div>
+              <span className="text-sm font-semibold text-primary">
+                ${product.price.toFixed(2)}
+              </span>
+            </button>
+          ))}
+        </>
+      )}
+
+      {filteredBundles.length > 0 && (
+        <>
+          {filteredProducts.length > 0 && (
+            <div className="mx-4 my-1 border-t border-border" />
+          )}
+          <p className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+            <Sparkles className="h-3 w-3" />
+            Bundles
+          </p>
+          {filteredBundles.map((bundle) => {
+            const bundleProducts = bundle.productIds
+              .map((id) => products.find((p) => p.id === id))
+              .filter(Boolean);
+            const totalPrice = bundleProducts.reduce(
+              (sum, p) => sum + (p?.price ?? 0),
+              0
+            );
+            const discountedPrice =
+              totalPrice * (1 - bundle.discountPercent / 100);
+
+            return (
+              <button
+                key={bundle.id}
+                onClick={() => {
+                  router.push("/catalog");
+                  closeSearch();
+                  setTimeout(() => {
+                    const el = document.getElementById("bundles-section");
+                    if (el) {
+                      const header = document.querySelector("header");
+                      const headerHeight = header?.getBoundingClientRect().height ?? 0;
+                      const top = el.getBoundingClientRect().top + window.scrollY - headerHeight;
+                      window.scrollTo({ top, behavior: "smooth" });
+                    }
+                  }, 150);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-accent transition-colors"
+              >
+                <div className="h-10 w-10 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {bundle.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {bundleProducts.map((p) => p?.name).join(" + ")}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end flex-shrink-0">
+                  <span className="text-sm font-semibold text-primary">
+                    ${discountedPrice.toFixed(2)}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground line-through">
+                    ${totalPrice.toFixed(2)}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </>
+      )}
+    </div>
+  );
+};
+
+const Header = () => {
+  const { itemCount, openCart } = useCart();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const _hasHydrated = useAuthStore((state) => state._hasHydrated);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Desktop search state
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Mobile search state
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [mobileSearchValue, setMobileSearchValue] = useState("");
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+
+  const filterProducts = (q: string) =>
+    q.trim()
+      ? products.filter(
+          (p) =>
+            p.name.toLowerCase().includes(q.toLowerCase()) ||
+            p.chemicalName.toLowerCase().includes(q.toLowerCase()) ||
+            p.casNumber.includes(q)
+        )
+      : [];
+
+  const filterBundles = (q: string) =>
+    q.trim()
+      ? bundles.filter((b) => {
+          const lq = q.toLowerCase();
+          const bundleProducts = b.productIds.map((id) => products.find((p) => p.id === id));
+          return (
+            b.name.toLowerCase().includes(lq) ||
+            b.description.toLowerCase().includes(lq) ||
+            bundleProducts.some(
+              (p) =>
+                p &&
+                (p.name.toLowerCase().includes(lq) ||
+                  p.chemicalName.toLowerCase().includes(lq))
+            )
+          );
+        })
+      : [];
+
+  const filteredProducts = filterProducts(searchValue);
+  const filteredBundles = filterBundles(searchValue);
+  const hasResults = filteredProducts.length > 0 || filteredBundles.length > 0;
+
+  const mobileFilteredProducts = filterProducts(mobileSearchValue);
+  const mobileFilteredBundles = filterBundles(mobileSearchValue);
+
+  useEffect(() => {
+    if (searchOpen) {
+      setTimeout(() => searchInputRef.current?.focus(), 50);
+    }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (mobileSearchOpen) {
+      setTimeout(() => mobileSearchInputRef.current?.focus(), 50);
+    }
+  }, [mobileSearchOpen]);
+
+  // Close desktop search on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+        setSearchValue("");
+      }
+    };
+    if (searchOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [searchOpen]);
+
+  // Close on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSearchOpen(false);
+        setSearchValue("");
+        setMobileSearchOpen(false);
+        setMobileSearchValue("");
+      }
+    };
+    if (searchOpen || mobileSearchOpen) {
+      document.addEventListener("keydown", handleKey);
+    }
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [searchOpen, mobileSearchOpen]);
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchValue("");
+  };
+
+  const closeMobileSearch = () => {
+    setMobileSearchOpen(false);
+    setMobileSearchValue("");
+  };
+
+  const scrollToElement = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const header = document.querySelector("header");
+      const headerHeight = header?.getBoundingClientRect().height ?? 0;
+      const top = el.getBoundingClientRect().top + window.scrollY - headerHeight;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
+  const handleNavClick = (l: typeof navLinks[0], e: React.MouseEvent) => {
+    if (l.scrollTo) {
+      e.preventDefault();
+      if (pathname === "/catalog") {
+        scrollToElement(l.scrollTo);
+      } else {
+        router.push(l.href);
+        setTimeout(() => scrollToElement(l.scrollTo!), 100);
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="container flex h-16 items-center justify-between md:h-20">
+        {/* Logo */}
+        <Link href="/" className="flex-shrink-0">
+          <img src="/images/peptihub-logo.png" alt="PeptiHub" className="h-20 md:h-24 w-auto" />
+        </Link>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((l) =>
+            l.scrollTo ? (
+              <a
+                key={l.label}
+                href="#"
+                onClick={(e) => handleNavClick(l, e)}
+                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors cursor-pointer"
+              >
+                {l.label}
+              </a>
+            ) : l.href.startsWith("/") && !l.href.includes("#") ? (
+              <Link
+                key={l.label}
+                href={l.href}
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a
+                key={l.label}
+                href={l.href}
+                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+              >
+                {l.label}
+              </a>
+            )
+          )}
+        </nav>
+
+        {/* Utility Icons */}
+        <div className="flex items-center gap-2">
+          {/* Desktop Inline Search */}
+          <div ref={searchContainerRef} className="relative hidden md:flex items-center">
+            <div
+              className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out rounded-full border ${
+                searchOpen
+                  ? "w-64 border-primary bg-background shadow-sm"
+                  : "w-10 border-transparent bg-transparent"
+              }`}
+            >
+              <button
+                onClick={() => {
+                  if (searchOpen && !searchValue.trim()) {
+                    closeSearch();
+                  } else {
+                    setSearchOpen(true);
+                  }
+                }}
+                className="flex-shrink-0 flex items-center justify-center h-10 w-10 text-foreground/70 hover:text-primary transition-colors"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+              {searchOpen && (
+                <input
+                  ref={searchInputRef}
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder="Search peptides..."
+                  className="flex-1 h-10 pr-3 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+                />
+              )}
+              {searchOpen && searchValue && (
+                <button
+                  onClick={closeSearch}
+                  className="flex-shrink-0 flex items-center justify-center h-10 w-8 pr-2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Desktop Results Dropdown */}
+            {searchOpen && searchValue.trim() && (
+              <div className="absolute top-full right-0 mt-2 w-96 bg-background border border-border rounded-lg shadow-lg overflow-hidden z-50 max-h-[400px] overflow-y-auto">
+                <SearchResults
+                  filteredProducts={filteredProducts}
+                  filteredBundles={filteredBundles}
+                  router={router}
+                  closeSearch={closeSearch}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Search Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileSearchOpen(true)}
+          >
+            <Search className="h-5 w-5" />
+          </Button>
+
+          <Button variant="ghost" size="icon" className="hidden md:inline-flex" asChild>
+            <Link href={isAuthenticated ? "/account/dashboard" : "/account"}>
+              <User className="h-5 w-5" />
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon" className="relative" onClick={openCart}>
+            <ShoppingCart className="h-5 w-5" />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                {itemCount}
+              </span>
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Search Overlay — portaled to body so header stacking context doesn't clip it */}
+      {mobileSearchOpen &&
+        createPortal(
+          <div className="md:hidden fixed inset-0 z-[100] bg-background flex flex-col">
+            {/* Search input bar */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+              <Search className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+              <input
+                ref={mobileSearchInputRef}
+                value={mobileSearchValue}
+                onChange={(e) => setMobileSearchValue(e.target.value)}
+                placeholder="Search peptides..."
+                className="flex-1 h-10 bg-transparent text-base text-foreground placeholder:text-muted-foreground outline-none"
+              />
+              <button
+                onClick={closeMobileSearch}
+                className="flex-shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Results */}
+            <div className="flex-1 overflow-y-auto">
+              {mobileSearchValue.trim() ? (
+                <SearchResults
+                  filteredProducts={mobileFilteredProducts}
+                  filteredBundles={mobileFilteredBundles}
+                  router={router}
+                  closeSearch={closeMobileSearch}
+                />
+              ) : (
+                <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  Start typing to search peptides…
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
+
+      {/* Mobile Nav */}
+      {mobileOpen && (
+        <nav className="md:hidden border-t border-border bg-background px-6 pb-4">
+          {navLinks.map((l) =>
+            l.scrollTo ? (
+              <a
+                key={l.label}
+                href="#"
+                onClick={(e) => { handleNavClick(l, e); setMobileOpen(false); }}
+                className="block py-3 text-sm font-medium text-foreground/80 hover:text-primary border-b border-border last:border-0 cursor-pointer"
+              >
+                {l.label}
+              </a>
+            ) : l.href.startsWith("/") && !l.href.includes("#") ? (
+              <Link
+                key={l.label}
+                href={l.href}
+                onClick={() => { setMobileOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                className="block py-3 text-sm font-medium text-foreground/80 hover:text-primary border-b border-border last:border-0"
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a
+                key={l.label}
+                href={l.href}
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-sm font-medium text-foreground/80 hover:text-primary border-b border-border last:border-0"
+              >
+                {l.label}
+              </a>
+            )
+          )}
+        </nav>
+      )}
+    </header>
+  );
+};
+
+export default Header;
