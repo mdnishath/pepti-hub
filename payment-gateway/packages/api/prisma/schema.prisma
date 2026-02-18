@@ -1,0 +1,217 @@
+// Prisma Schema for PeptiPay Gateway
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Merchants table
+model Merchant {
+  id                  String          @id @default(uuid())
+  email               String          @unique
+  passwordHash        String
+  businessName        String
+  apiKeyHash          String          @unique
+  walletAddress       String
+  coldWalletAddress   String?
+  webhookUrl          String?
+  webhookSecret       String?         // Encrypted
+  feePercentage       Float           @default(2.5)
+  status              MerchantStatus  @default(ACTIVE)
+  twoFactorEnabled    Boolean         @default(false)
+  twoFactorSecret     String?         // Encrypted
+  emailVerified       Boolean         @default(false)
+  emailVerificationToken String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relations
+  paymentOrders       PaymentOrder[]
+  auditLogs           AuditLog[]
+
+  @@map("merchants")
+}
+
+enum MerchantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+// Payment Orders table
+model PaymentOrder {
+  id                String          @id @default(uuid())
+  merchantId        String
+  orderId           String          // Merchant's order reference
+  amount            Decimal         @db.Decimal(18, 8)
+  feeAmount         Decimal         @db.Decimal(18, 8)
+  netAmount         Decimal         @db.Decimal(18, 8)
+  currency          Currency
+  paymentAddress    String          @unique
+  addressIndex      Int             // HD wallet derivation index
+  status            PaymentStatus   @default(CREATED)
+  expiresAt         DateTime
+  callbackUrl       String?         // Webhook URL for payment notifications
+  returnUrl         String?         // URL to redirect user after payment
+  successUrl        String?
+  cancelUrl         String?
+  metadata          Json?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  confirmedAt       DateTime?
+  settledAt         DateTime?
+
+  // Relations
+  merchant          Merchant        @relation(fields: [merchantId], references: [id])
+  transactions      Transaction[]
+  webhookDeliveries WebhookDelivery[]
+
+  @@index([merchantId])
+  @@index([status])
+  @@index([paymentAddress])
+  @@index([createdAt])
+  @@map("payment_orders")
+}
+
+enum Currency {
+  USDT
+  USDC
+  BUSD
+}
+
+enum PaymentStatus {
+  CREATED
+  PENDING
+  PAID
+  CONFIRMED
+  SETTLED
+  EXPIRED
+  FAILED
+}
+
+// Transactions table (blockchain transactions)
+model Transaction {
+  id              String            @id @default(uuid())
+  paymentOrderId  String
+  txHash          String            @unique
+  fromAddress     String
+  toAddress       String
+  amount          Decimal           @db.Decimal(18, 8)
+  tokenAddress    String
+  blockNumber     BigInt
+  confirmations   Int               @default(0)
+  status          TransactionStatus @default(PENDING)
+  detectedAt      DateTime          @default(now())
+  confirmedAt     DateTime?
+
+  // Relations
+  paymentOrder    PaymentOrder      @relation(fields: [paymentOrderId], references: [id])
+
+  @@index([paymentOrderId])
+  @@index([txHash])
+  @@index([status])
+  @@map("transactions")
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+enum WebhookStatus {
+  PENDING
+  DELIVERED
+  FAILED
+}
+
+// Webhook Deliveries table
+model WebhookDelivery {
+  id              String         @id @default(uuid())
+  paymentOrderId  String
+  url             String
+  event           String
+  payload         Json
+  signature       String
+  status          WebhookStatus  @default(PENDING)
+  responseCode    Int?
+  responseBody    String?
+  errorMessage    String?
+  attempts        Int            @default(0)
+  lastAttemptAt   DateTime?
+  nextRetryAt     DateTime?
+  deliveredAt     DateTime?
+  createdAt       DateTime       @default(now())
+
+  // Relations
+  paymentOrder    PaymentOrder   @relation(fields: [paymentOrderId], references: [id])
+
+  @@index([paymentOrderId])
+  @@index([status])
+  @@index([nextRetryAt])
+  @@map("webhook_deliveries")
+}
+
+// Audit Logs table
+model AuditLog {
+  id          String   @id @default(uuid())
+  merchantId  String
+  action      String
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  merchant    Merchant @relation(fields: [merchantId], references: [id])
+
+  @@index([merchantId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// Withdrawals table (for merchant withdrawals)
+model Withdrawal {
+  id              String           @id @default(uuid())
+  merchantId      String
+  amount          Decimal          @db.Decimal(18, 8)
+  currency        Currency
+  toAddress       String
+  txHash          String?
+  status          WithdrawalStatus @default(PENDING)
+  twoFactorCode   String?          // Temporary, for verification
+  approvedBy      String?          // Admin ID
+  createdAt       DateTime         @default(now())
+  processedAt     DateTime?
+
+  @@index([merchantId])
+  @@index([status])
+  @@map("withdrawals")
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  PROCESSING
+  COMPLETED
+  FAILED
+  REJECTED
+}
+
+// API Keys table (if merchants can have multiple keys)
+model ApiKey {
+  id          String   @id @default(uuid())
+  merchantId  String
+  keyHash     String   @unique
+  name        String?  // e.g., "Production", "Staging"
+  permissions Json?    // Array of permissions
+  lastUsedAt  DateTime?
+  createdAt   DateTime @default(now())
+  revokedAt   DateTime?
+
+  @@index([merchantId])
+  @@index([keyHash])
+  @@map("api_keys")
+}

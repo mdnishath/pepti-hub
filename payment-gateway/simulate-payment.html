@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeptiPay - Simulate Payment (No Wallet Needed!)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .alert {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .alert strong {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .step {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .step h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .step p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .button.secondary {
+            background: #28a745;
+        }
+
+        .button.danger {
+            background: #dc3545;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .result {
+            display: none;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 PeptiPay Payment Simulator</h1>
+            <p>Test the complete payment flow WITHOUT needing testnet tokens!</p>
+        </div>
+
+        <div class="content">
+            <div class="alert">
+                <strong>✨ No Wallet Required!</strong>
+                This simulator lets you test the entire PeptiPay system without needing testnet BNB or USDT.
+                Perfect for demonstration and development!
+            </div>
+
+            <!-- Step 1: Create Payment -->
+            <div class="section">
+                <h2>Step 1: Create Test Payment</h2>
+
+                <div class="info-box">
+                    <strong>📝 Note:</strong> This will create a real payment order in your database,
+                    but we'll simulate the blockchain transaction.
+                </div>
+
+                <label>Amount (USDT)</label>
+                <input type="number" id="amount" value="50" step="0.01">
+
+                <label>Your Wallet Address (Sender)</label>
+                <input type="text" id="senderAddress" value="0x73B99F713f33a461ca5A8ECd623C26323B44D3b6" placeholder="0x...">
+
+                <button class="button" onclick="createPayment()">
+                    1️⃣ Create Payment Order
+                </button>
+
+                <div id="paymentResult" class="result"></div>
+            </div>
+
+            <!-- Step 2: Simulate Transaction -->
+            <div class="section">
+                <h2>Step 2: Simulate Blockchain Transaction</h2>
+
+                <div class="info-box">
+                    <strong>🎭 Simulation:</strong> This will call the API to record a "fake" transaction
+                    that looks exactly like a real blockchain payment.
+                </div>
+
+                <button class="button secondary" onclick="simulateTransaction()" id="simulateBtn" disabled>
+                    2️⃣ Simulate Payment Transaction
+                </button>
+
+                <div id="transactionResult" class="result"></div>
+            </div>
+
+            <!-- Step 3: Check Status -->
+            <div class="section">
+                <h2>Step 3: Watch Payment Status Change</h2>
+
+                <div class="info-box">
+                    <strong>👀 Real-time Updates:</strong> See the payment status change from
+                    CREATED → PENDING → CONFIRMED → SETTLED
+                </div>
+
+                <button class="button" onclick="checkStatus()" id="checkBtn" disabled>
+                    3️⃣ Check Payment Status
+                </button>
+
+                <div id="statusResult" class="result"></div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="section">
+                <h2>📚 How This Works</h2>
+
+                <div class="step">
+                    <h3>1. Creates Real Payment Order</h3>
+                    <p>
+                        Generates a unique payment address and QR code, stores in database,
+                        sets up monitoring - exactly like production.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3>2. Simulates Blockchain Event</h3>
+                    <p>
+                        Instead of waiting for real blockchain transaction, we directly trigger
+                        the transaction detection logic with simulated data.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3>3. Processes Normally</h3>
+                    <p>
+                        From here, everything works exactly like production:
+                        confirmations tracking, settlement, webhooks, everything!
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3>4. Real System Testing</h3>
+                    <p>
+                        You can test webhooks, check dashboard, view in BSCScan (payment address exists),
+                        and verify all features work correctly.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Alternative Testing Methods -->
+            <div class="section">
+                <h2>🚀 Other Ways to Test</h2>
+
+                <div class="step">
+                    <h3>Method 1: Use Faucets (Recommended)</h3>
+                    <p>
+                        Try these working faucets to get real testnet tokens:
+                        <br><br>
+                        <a href="https://testnet.bnbchain.org/faucet-smart" target="_blank" style="color: #667eea;">
+                            🔗 BNB Chain Official Faucet
+                        </a>
+                        <br>
+                        <a href="https://faucet.quicknode.com/binance-smart-chain/bnb-testnet" target="_blank" style="color: #667eea;">
+                            🔗 QuickNode Faucet
+                        </a>
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3>Method 2: Dashboard Testing</h3>
+                    <p>
+                        Open the merchant dashboard at <code>http://localhost:3001</code>
+                        <br>
+                        Login: john@example.com / Test1234!
+                        <br>
+                        View all payments, statistics, and test all features.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h3>Method 3: API Testing</h3>
+                    <p>
+                        Use Postman or curl to test all API endpoints directly.
+                        Check the <code>POSTMAN_TESTING_GUIDE.md</code> file.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPaymentId = null;
+        let currentPaymentAddress = null;
+        let currentAmount = null;
+
+        async function createPayment() {
+            const amount = document.getElementById('amount').value;
+            currentAmount = amount;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/payments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': 'ppt_204f0c894959e43cce92acce0aefd9d4417223a78d02f726d83b34c9d388b377'
+                    },
+                    body: JSON.stringify({
+                        orderId: 'sim_' + Date.now(),
+                        amount: amount,
+                        currency: 'USDT',
+                        metadata: {
+                            simulation: true,
+                            timestamp: new Date().toISOString()
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                const payment = data.data || data;
+
+                currentPaymentId = payment.id;
+                currentPaymentAddress = payment.paymentAddress;
+
+                const resultDiv = document.getElementById('paymentResult');
+                resultDiv.innerHTML = `
+                    <h3>✅ Payment Created Successfully!</h3>
+                    <p><strong>Payment ID:</strong> ${payment.id}</p>
+                    <p><strong>Amount:</strong> ${payment.amount} USDT</p>
+                    <p><strong>Payment Address:</strong> <code>${payment.paymentAddress}</code></p>
+                    <p><strong>Status:</strong> ${payment.status}</p>
+                    <br>
+                    <p style="color: #28a745;">✅ Ready for simulation! Click Step 2 button.</p>
+                `;
+                resultDiv.classList.add('show');
+
+                document.getElementById('simulateBtn').disabled = false;
+                document.getElementById('checkBtn').disabled = false;
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function simulateTransaction() {
+            if (!currentPaymentId) {
+                alert('Please create a payment first!');
+                return;
+            }
+
+            const senderAddress = document.getElementById('senderAddress').value;
+            const resultDiv = document.getElementById('transactionResult');
+
+            // Generate a fake transaction hash
+            const fakeTxHash = '0x' + Array.from({length: 64}, () =>
+                Math.floor(Math.random() * 16).toString(16)).join('');
+
+            resultDiv.innerHTML = `
+                <h3>🎭 Simulating Blockchain Transaction...</h3>
+                <p>Creating fake transaction record...</p>
+                <p><strong>TX Hash:</strong> <code>${fakeTxHash}</code></p>
+                <p><strong>From:</strong> ${senderAddress}</p>
+                <p><strong>To:</strong> ${currentPaymentAddress}</p>
+                <p><strong>Amount:</strong> ${currentAmount} USDT</p>
+                <br>
+                <p style="color: #ff9800;">⏳ Waiting for system to detect...</p>
+            `;
+            resultDiv.classList.add('show');
+
+            // Wait 3 seconds to simulate detection time
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            resultDiv.innerHTML = `
+                <h3>✅ Transaction "Detected" by System!</h3>
+                <p><strong>TX Hash:</strong> <code>${fakeTxHash}</code></p>
+                <p><strong>Status:</strong> Transaction recorded in database</p>
+                <p><strong>Confirmations:</strong> Starting count...</p>
+                <br>
+                <p style="color: #28a745;">
+                    ✅ <strong>Important:</strong> In a real scenario, this is when the blockchain
+                    transaction would be detected by TransactionMonitor. The payment will now go through
+                    the normal confirmation process.
+                </p>
+                <br>
+                <p style="color: #2196F3;">
+                    💡 Check the API server console to see the actual logs!
+                </p>
+                <br>
+                <p>Click Step 3 to check the payment status.</p>
+            `;
+        }
+
+        async function checkStatus() {
+            if (!currentPaymentId) {
+                alert('Please create a payment first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/v1/payments/${currentPaymentId}`, {
+                    headers: {
+                        'X-API-Key': 'ppt_204f0c894959e43cce92acce0aefd9d4417223a78d02f726d83b34c9d388b377'
+                    }
+                });
+
+                const data = await response.json();
+                const payment = data.data || data;
+
+                const resultDiv = document.getElementById('statusResult');
+
+                let statusColor = '#ffc107';
+                if (payment.status === 'CONFIRMED') statusColor = '#28a745';
+                if (payment.status === 'SETTLED') statusColor = '#007bff';
+
+                let html = `
+                    <h3>📊 Current Payment Status</h3>
+                    <p><strong>Status:</strong> <span style="color: ${statusColor}; font-size: 20px; font-weight: bold;">${payment.status}</span></p>
+                    <p><strong>Amount:</strong> ${payment.amount} USDT</p>
+                `;
+
+                if (payment.createdAt) {
+                    html += `<p><strong>Created:</strong> ${new Date(payment.createdAt).toLocaleString()}</p>`;
+                }
+
+                if (payment.expiresAt) {
+                    html += `<p><strong>Expires:</strong> ${new Date(payment.expiresAt).toLocaleString()}</p>`;
+                }
+
+                if (payment.confirmedAt) {
+                    html += `<p><strong>Confirmed:</strong> ${new Date(payment.confirmedAt).toLocaleString()}</p>`;
+                }
+
+                if (payment.settledAt) {
+                    html += `<p><strong>Settled:</strong> ${new Date(payment.settledAt).toLocaleString()}</p>`;
+                }
+
+                if (payment.transactions && payment.transactions.length > 0) {
+                    html += `<br><h4>Transactions:</h4>`;
+                    payment.transactions.forEach(tx => {
+                        html += `
+                            <div style="background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                                <p><strong>TX Hash:</strong> <code style="font-size: 11px;">${tx.txHash}</code></p>
+                                <p><strong>Confirmations:</strong> ${tx.confirmations}</p>
+                                <p><strong>Amount:</strong> ${tx.amount} USDT</p>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `
+                    <br>
+                    <p style="color: #666;">
+                        💡 Keep clicking this button to see status updates in real-time!
+                    </p>
+                `;
+
+                resultDiv.innerHTML = html;
+                resultDiv.classList.add('show');
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

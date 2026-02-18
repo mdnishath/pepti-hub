@@ -1,0 +1,36 @@
+# Implementation Plan - Enhance Admin Dashboard UI
+
+The user wants a "pro-level" admin dashboard facelift with a strict dark theme (#020618 background) and teal brand color (#3db7c2). The focus is on 100% mobile responsiveness.
+
+## Proposed Changes
+
+### 1. Theme & Global Styles
+-   **Colors**: Update [tailwind.config.ts](file:///e:/pepti-hub/frondend/tailwind.config.ts) to include `brand: '#3db7c2'` and `dark-bg: '#020618'`.
+-   **Dark Mode**: Enforce dark mode in [globals.css](file:///e:/pepti-hub/frontend/app/globals.css) or [admin/layout.tsx](file:///e:/pepti-hub/frontend/app/admin/layout.tsx) by default. Override shadcn/ui variables to match the new dark palette.
+-   **Typography**: Ensure a clean, modern font stack (Inter/Geist).
+
+### 2. Admin Layout ([app/admin/layout.tsx](file:///e:/pepti-hub/frontend/app/admin/layout.tsx))
+-   **Sidebar**: Implement a responsive sidebar that:
+    -   Is hidden/hamburger-menu on mobile.
+    -   Fixed/permanent on desktop.
+    -   Uses the new dark aesthetic.
+-   **Header**: Minimalist header with user profile and mobile menu toggle.
+-   **Main Content**: Ensure proper padding/margins for mobile vs desktop.
+
+### 3. Dashboard Overview (`app/admin/page.tsx`)
+-   **Stats Cards**: Redesign with gradients/glassmorphism using the brand color.
+-   **Charts/Activity**: Ensure containers resize correctly on small screens.
+
+### 4. Component Refactoring
+-   **Tables**: Wrap shadcn tables in responsive containers or provide card-view fallback for mobile.
+-   **Forms**: Ensure inputs and buttons have touch-friendly tap targets.
+
+## User Review Required
+-   **Color Palette**: Confirming #3db7c2 (Cyan/Teal) and #020618 (Dark Navy/Black).
+-   **Scope**: strictly `app/admin`.
+
+## Verification Plan
+### Manual Verification
+-   **Mobile Check**: Use browser devtools to check iPhone SE/Pixel dimensions.
+-   **Desktop Check**: Ensure it still looks good on wide screens.
+-   **Navigation**: Test sidebar toggling on mobile.

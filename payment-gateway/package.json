@@ -1,0 +1,44 @@
+{
+  "name": "pptpay-gateway",
+  "version": "1.0.0",
+  "description": "PeptiPay - Crypto Payment Gateway for High-Risk Businesses",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter @pptpay/api dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "migrate": "pnpm --filter @pptpay/api migrate",
+    "migrate:dev": "pnpm --filter @pptpay/api migrate:dev",
+    "studio": "pnpm --filter @pptpay/api studio"
+  },
+  "keywords": [
+    "crypto",
+    "payment",
+    "gateway",
+    "bep20",
+    "bsc",
+    "usdt",
+    "usdc",
+    "stablecoin"
+  ],
+  "author": "PeptiPay Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "ethers": "^6.16.0"
+  }
+}

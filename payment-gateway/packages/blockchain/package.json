@@ -1,0 +1,32 @@
+{
+  "name": "@pptpay/blockchain",
+  "version": "1.0.0",
+  "description": "Blockchain service for PeptiPay Gateway",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest"
+  },
+  "keywords": [
+    "pptpay",
+    "blockchain",
+    "bsc",
+    "bep20"
+  ],
+  "author": "PeptiPay Team",
+  "license": "MIT",
+  "dependencies": {
+    "@pptpay/shared": "workspace:*",
+    "ethers": "^6.10.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "dotenv": "^16.6.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1"
+  }
+}
