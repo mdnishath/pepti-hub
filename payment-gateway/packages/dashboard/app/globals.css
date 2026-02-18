@@ -63,11 +63,11 @@
   }
 
   .stat-card {
-    @apply bg-dark-bg-card border border-white/5 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 group;
+    @apply bg-dark-bg-card border border-white/5 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6;
   }
 
   .sidebar-link {
-    @apply flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 group relative overflow-hidden;
+    @apply flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 relative overflow-hidden;
   }
 
   .sidebar-link-active {

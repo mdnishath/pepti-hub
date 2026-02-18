@@ -28,7 +28,7 @@ interface StatCardProps {
 
 function StatCard({ title, value, subtitle, change, changeType, icon: Icon, iconColor }: StatCardProps) {
   return (
-    <div className="stat-card">
+    <div className="stat-card group">
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-400 group-hover:text-brand-300 transition-colors">

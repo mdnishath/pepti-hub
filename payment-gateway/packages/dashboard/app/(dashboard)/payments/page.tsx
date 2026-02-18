@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { authAPI, paymentsAPI } from '@/lib/api';
+import { CreditCard, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function PaymentsPage() {
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -16,11 +15,7 @@ export default function PaymentsPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [profileData, paymentsData] = await Promise.all([
-          authAPI.getProfile(),
-          paymentsAPI.getPayments(page, 10)
-        ]);
-        setProfile(profileData);
+        const paymentsData = await paymentsAPI.getPayments(page, 10);
 
         // Handle different response formats and ensure array
         let paymentsArray = [];
@@ -46,184 +41,170 @@ export default function PaymentsPage() {
     loadData();
   }, [router, page]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('apiKey');
-    router.push('/login');
-  };
-
   const getStatusBadge = (status: string) => {
-    const styles: any = {
-      CREATED: 'bg-gray-100 text-gray-800',
-      PENDING: 'bg-yellow-100 text-yellow-800',
-      CONFIRMED: 'bg-green-100 text-green-800',
-      SETTLED: 'bg-blue-100 text-blue-800',
-      EXPIRED: 'bg-red-100 text-red-800',
-      FAILED: 'bg-red-100 text-red-800',
+    const styles: Record<string, string> = {
+      CREATED: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+      PENDING: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+      CONFIRMED: 'bg-green-500/10 text-green-400 border-green-500/20',
+      SETTLED: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+      EXPIRED: 'bg-red-500/10 text-red-400 border-red-500/20',
+      FAILED: 'bg-red-500/10 text-red-400 border-red-500/20',
     };
-    return styles[status] || 'bg-gray-100 text-gray-800';
+    return styles[status] || 'bg-gray-500/10 text-gray-400 border-gray-500/20';
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full"></div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="space-y-6">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-2xl font-bold text-primary-600">PeptiPay</h1>
-            <nav className="flex items-center space-x-4">
-              <Link href="/dashboard" className="text-gray-700 hover:text-primary-600 font-medium">
-                Dashboard
-              </Link>
-              <Link href="/payments" className="text-primary-600 font-medium border-b-2 border-primary-600 pb-1">
-                Payments
-              </Link>
-              <Link href="/settings" className="text-gray-700 hover:text-primary-600 font-medium">
-                Settings
-              </Link>
-              <span className="text-sm text-gray-600 border-l pl-4 ml-4">{profile?.businessName}</span>
-              <button onClick={handleLogout} className="btn btn-secondary text-sm">
-                Logout
-              </button>
-            </nav>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold gradient-text">Payments</h1>
+          <p className="text-gray-400 mt-2">Manage and track all your payment transactions</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="px-4 py-2 bg-brand-500/10 border border-brand-500/20 rounded-lg">
+            <span className="text-sm text-gray-400">Total: </span>
+            <span className="text-sm font-semibold text-brand-400">{payments.length} payments</span>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Payment History</h2>
-          <p className="text-gray-600 mt-1">View and manage all your payment transactions</p>
-        </div>
-
-        {/* Payments Table */}
-        <div className="card overflow-hidden p-0">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Order ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Address
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Expires
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {payments.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                      No payments yet. Create your first payment to get started!
-                    </td>
+      {/* Payments Table Card */}
+      <div className="card">
+        {payments.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-brand-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CreditCard className="w-8 h-8 text-brand-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-200 mb-2">No payments yet</h3>
+            <p className="text-gray-400 text-sm">
+              Your payment transactions will appear here once customers start making payments.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-4 px-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Order ID
+                    </th>
+                    <th className="text-left py-4 px-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Amount
+                    </th>
+                    <th className="text-left py-4 px-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="text-left py-4 px-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Payment Address
+                    </th>
+                    <th className="text-left py-4 px-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Created
+                    </th>
+                    <th className="text-right py-4 px-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
-                ) : (
-                  payments.map((payment) => (
-                    <tr key={payment.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{payment.orderId}</div>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {payments.map((payment: any) => (
+                    <tr key={payment.id} className="hover:bg-white/5 transition-colors group">
+                      <td className="py-4 px-4">
+                        <span className="text-sm font-mono font-medium text-gray-200">
+                          #{payment.orderId}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {payment.amount} {payment.currency}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Fee: {payment.feeAmount}
+                      <td className="py-4 px-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold text-gray-100">
+                            {payment.amount} USDT
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            Net: {payment.netAmount} USDT
+                          </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(payment.status)}`}>
+                      <td className="py-4 px-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(
+                            payment.status
+                          )}`}
+                        >
                           {payment.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-xs font-mono text-gray-500">
-                          {payment.paymentAddress.slice(0, 10)}...{payment.paymentAddress.slice(-8)}
+                      <td className="py-4 px-4">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs font-mono text-gray-400">
+                            {payment.paymentAddress?.slice(0, 6)}...{payment.paymentAddress?.slice(-4)}
+                          </span>
+                          <a
+                            href={`https://bscscan.com/address/${payment.paymentAddress}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-brand-400 hover:text-brand-300 transition-colors"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(payment.createdAt).toLocaleString()}
+                      <td className="py-4 px-4">
+                        <span className="text-sm text-gray-400">
+                          {new Date(payment.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(payment.expiresAt).toLocaleString()}
+                      <td className="py-4 px-4 text-right">
+                        <button className="text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors opacity-0 group-hover:opacity-100">
+                          View Details
+                        </button>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-              <div className="flex-1 flex justify-between sm:hidden">
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="btn btn-secondary"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="btn btn-secondary ml-3"
-                >
-                  Next
-                </button>
-              </div>
-              <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    Page <span className="font-medium">{page}</span> of{' '}
-                    <span className="font-medium">{totalPages}</span>
-                  </p>
-                </div>
-                <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                    <button
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                      className="btn btn-secondary rounded-r-none"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                      disabled={page === totalPages}
-                      className="btn btn-secondary rounded-l-none"
-                    >
-                      Next
-                    </button>
-                  </nav>
-                </div>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </div>
-      </main>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/10">
+                <div className="text-sm text-gray-400">
+                  Page <span className="font-semibold text-gray-200">{page}</span> of{' '}
+                  <span className="font-semibold text-gray-200">{totalPages}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-gray-300" />
+                  </button>
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4 text-gray-300" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -112,7 +112,7 @@ export default function DashboardLayout({ children }: LayoutProps) {
                 key={item.name}
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`sidebar-link ${
+                className={`sidebar-link group ${
                   isActive ? 'sidebar-link-active' : 'sidebar-link-inactive'
                 }`}
               >

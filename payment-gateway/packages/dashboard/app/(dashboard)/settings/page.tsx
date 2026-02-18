@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { authAPI } from '@/lib/api';
+import { Key, Copy, Check, RefreshCw, Eye, EyeOff, Wallet, Mail, Building } from 'lucide-react';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -31,12 +31,6 @@ export default function SettingsPage() {
     loadData();
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('apiKey');
-    router.push('/login');
-  };
-
   const handleRegenerateApiKey = async () => {
     if (!confirm('Are you sure you want to regenerate your API key? This will invalidate the current key.')) {
       return;
@@ -63,8 +57,8 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full"></div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
       </div>
     );
   }
@@ -76,185 +70,197 @@ export default function SettingsPage() {
     : '🔒 API key hidden for security. Click "Regenerate" to generate a new key.';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="space-y-6">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-2xl font-bold text-primary-600">PeptiPay</h1>
-            <nav className="flex items-center space-x-4">
-              <Link href="/dashboard" className="text-gray-700 hover:text-primary-600 font-medium">
-                Dashboard
-              </Link>
-              <Link href="/payments" className="text-gray-700 hover:text-primary-600 font-medium">
-                Payments
-              </Link>
-              <Link href="/settings" className="text-primary-600 font-medium border-b-2 border-primary-600 pb-1">
-                Settings
-              </Link>
-              <span className="text-sm text-gray-600 border-l pl-4 ml-4">{profile?.businessName}</span>
-              <button onClick={handleLogout} className="btn btn-secondary text-sm">
-                Logout
-              </button>
-            </nav>
+      <div>
+        <h1 className="text-3xl font-bold gradient-text">Settings</h1>
+        <p className="text-gray-400 mt-2">Manage your account settings and API configuration</p>
+      </div>
+
+      {/* Account Information */}
+      <div className="card">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-brand-500/10 rounded-xl flex items-center justify-center border border-brand-500/20">
+            <Building className="w-5 h-5 text-brand-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-100">Account Information</h2>
+            <p className="text-sm text-gray-400">Your business account details</p>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Account Settings</h2>
-          <p className="text-gray-600 mt-1">Manage your API keys and account information</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-5 bg-white/5 rounded-xl border border-white/10">
+            <div className="flex items-center space-x-2 mb-2">
+              <Building className="w-4 h-4 text-gray-400" />
+              <label className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                Business Name
+              </label>
+            </div>
+            <p className="text-gray-100 font-medium">{profile?.businessName}</p>
+          </div>
+
+          <div className="p-5 bg-white/5 rounded-xl border border-white/10">
+            <div className="flex items-center space-x-2 mb-2">
+              <Mail className="w-4 h-4 text-gray-400" />
+              <label className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                Email Address
+              </label>
+            </div>
+            <p className="text-gray-100 font-medium">{profile?.email}</p>
+          </div>
+
+          <div className="p-5 bg-white/5 rounded-xl border border-white/10 md:col-span-2">
+            <div className="flex items-center space-x-2 mb-2">
+              <Wallet className="w-4 h-4 text-brand-400" />
+              <label className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                Settlement Wallet Address
+              </label>
+            </div>
+            <p className="text-gray-100 font-mono text-sm break-all">{profile?.walletAddress}</p>
+            <p className="text-xs text-gray-500 mt-2">
+              This wallet will receive all settled payments from your customers.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* API Key Management */}
+      <div className="card">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center border border-purple-500/20">
+            <Key className="w-5 h-5 text-purple-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-100">API Key Management</h2>
+            <p className="text-sm text-gray-400">Use this key to integrate payments into your application</p>
+          </div>
         </div>
 
-        {/* API Key Section */}
-        <div className="card mb-6">
-          <h3 className="text-lg font-semibold mb-4">API Key</h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Use this API key to authenticate requests to the PeptiPay API. Keep it secure and never share it publicly.
-          </p>
-
-          <div className="bg-gray-50 p-4 rounded-lg mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Your API Key</label>
+        <div className="space-y-4">
+          {/* API Key Display */}
+          <div className="p-5 bg-dark-bg-lighter rounded-xl border border-white/10">
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-sm text-gray-400 font-medium">Your API Key</label>
               {hasApiKey && (
                 <button
                   onClick={() => setShowApiKey(!showApiKey)}
-                  className="text-sm text-primary-600 hover:text-primary-700"
+                  className="text-sm text-brand-400 hover:text-brand-300 transition-colors flex items-center space-x-1"
                 >
-                  {showApiKey ? 'Hide' : 'Show'}
+                  {showApiKey ? (
+                    <>
+                      <EyeOff className="w-4 h-4" />
+                      <span>Hide</span>
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="w-4 h-4" />
+                      <span>Show</span>
+                    </>
+                  )}
                 </button>
               )}
             </div>
+
             <div className="flex items-center space-x-2">
-              <code className="flex-1 bg-white border border-gray-300 rounded px-3 py-2 text-sm font-mono overflow-x-auto">
+              <code className="flex-1 bg-dark-bg border border-white/5 px-4 py-3 rounded-lg text-sm font-mono text-gray-300 overflow-x-auto">
                 {showApiKey && hasApiKey ? apiKey : maskedApiKey}
               </code>
               {hasApiKey && (
                 <button
                   onClick={() => copyToClipboard(apiKey)}
-                  className="btn btn-secondary"
+                  className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors flex items-center space-x-2"
                   title="Copy to clipboard"
                 >
                   {copied ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <>
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span className="text-sm text-green-400">Copied!</span>
+                    </>
                   ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
+                    <>
+                      <Copy className="w-4 h-4 text-gray-300" />
+                      <span className="text-sm text-gray-300">Copy</span>
+                    </>
                   )}
                 </button>
               )}
             </div>
           </div>
 
-          <button
-            onClick={handleRegenerateApiKey}
-            disabled={regenerating}
-            className="btn bg-red-600 text-white hover:bg-red-700"
-          >
-            {regenerating ? 'Regenerating...' : 'Regenerate API Key'}
-          </button>
-          <p className="text-xs text-gray-500 mt-2">
-            ⚠️ Regenerating your API key will invalidate the current key. Update your integration immediately after regeneration.
-          </p>
+          {/* Regenerate Button */}
+          <div className="flex items-center justify-between p-5 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-yellow-300 mb-1">Regenerate API Key</h3>
+              <p className="text-xs text-yellow-400/80">
+                This action will invalidate your current API key. Update all integrations with the new key.
+              </p>
+            </div>
+            <button
+              onClick={handleRegenerateApiKey}
+              disabled={regenerating}
+              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 ml-4"
+            >
+              <RefreshCw className={`w-4 h-4 ${regenerating ? 'animate-spin' : ''}`} />
+              <span>{regenerating ? 'Regenerating...' : 'Regenerate'}</span>
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* Account Information */}
-        <div className="card mb-6">
-          <h3 className="text-lg font-semibold mb-4">Account Information</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Business Name</label>
-              <p className="mt-1 text-gray-900">{profile?.businessName}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Email Address</label>
-              <p className="mt-1 text-gray-900">{profile?.email}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Settlement Wallet Address</label>
-              <div className="mt-1 flex items-center space-x-2">
-                <code className="flex-1 bg-gray-50 border border-gray-200 rounded px-3 py-2 text-sm font-mono">
-                  {profile?.walletAddress}
-                </code>
-                <button
-                  onClick={() => copyToClipboard(profile?.walletAddress)}
-                  className="btn btn-secondary"
-                  title="Copy to clipboard"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Confirmed payments will be settled to this BSC wallet address
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Member Since</label>
-              <p className="mt-1 text-gray-900">
-                {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                }) : 'N/A'}
-              </p>
-            </div>
+      {/* Integration Guide */}
+      <div className="card">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20">
+            <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-100">Quick Integration Guide</h2>
+            <p className="text-sm text-gray-400">Get started with payment integration</p>
           </div>
         </div>
 
-        {/* Integration Guide */}
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-4">Quick Integration Guide</h3>
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-2">1. Create a Payment</h4>
-              <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto">
+        <div className="space-y-4">
+          <div className="p-5 bg-white/5 rounded-xl border border-white/10">
+            <h3 className="text-sm font-semibold text-gray-200 mb-3">1. Create a Payment</h3>
+            <pre className="bg-dark-bg-lighter border border-white/10 p-4 rounded-lg text-xs font-mono text-gray-300 overflow-x-auto">
 {`curl -X POST http://localhost:3000/api/v1/payments \\
   -H "Content-Type: application/json" \\
-  -H "X-API-Key: ${apiKey.slice(0, 20)}..." \\
+  -H "X-API-Key: YOUR_API_KEY" \\
   -d '{
     "orderId": "order_123",
-    "amount": "100",
+    "amount": "100.00",
     "currency": "USDT",
-    "callbackUrl": "https://yoursite.com/webhook",
-    "returnUrl": "https://yoursite.com/success"
+    "returnUrl": "https://yoursite.com/success",
+    "callbackUrl": "https://yoursite.com/webhook"
   }'`}
-              </pre>
-            </div>
+            </pre>
+          </div>
 
-            <div>
-              <h4 className="text-sm font-medium text-gray-900 mb-2">2. Response</h4>
-              <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto">
-{`{
-  "id": "payment_abc123",
-  "orderId": "order_123",
-  "amount": "100",
-  "currency": "USDT",
-  "paymentAddress": "0x...",
-  "status": "CREATED",
-  "expiresAt": "2024-01-01T12:00:00Z",
-  "qrCode": "data:image/png;base64,..."
-}`}
-              </pre>
-            </div>
+          <div className="p-5 bg-white/5 rounded-xl border border-white/10">
+            <h3 className="text-sm font-semibold text-gray-200 mb-3">2. Redirect Customer to Payment URL</h3>
+            <p className="text-sm text-gray-400 mb-2">
+              The API will return a <code className="text-brand-400">paymentUrl</code>. Redirect your customer to this
+              URL to complete the payment.
+            </p>
+          </div>
 
-            <div>
-              <p className="text-sm text-gray-600">
-                For complete API documentation, visit the{' '}
-                <a href="/docs" className="text-primary-600 hover:underline">
-                  API docs
-                </a>
-              </p>
-            </div>
+          <div className="p-5 bg-white/5 rounded-xl border border-white/10">
+            <h3 className="text-sm font-semibold text-gray-200 mb-3">3. Handle Webhook Notifications</h3>
+            <p className="text-sm text-gray-400">
+              You'll receive webhook notifications at your <code className="text-brand-400">callbackUrl</code> when
+              payment status changes (PENDING, CONFIRMED, SETTLED).
+            </p>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
